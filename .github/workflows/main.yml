@@ -32,14 +32,14 @@ jobs:
         run: |
           dotnet tool install --global trx2junit
           mkdir -p KafkaSchemaGenerator/TestResults/junit
-          trx2junit KafkaSchemaGenerator/TestResults/**/*.trx -o KafkaSchemaGenerator/TestResults/junit/test-results.xml
+          trx2junit KafkaSchemaGenerator/**/TestResults/*.trx -o KafkaSchemaGenerator/TestResults/junit/test-results.xml
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v2
         if: always()
         with:
           name: Unit Tests
-          path: 'KafkaSchemaGenerator/TestResults/junit/*.xml'
+          path: 'KafkaSchemaGenerator/**/TestResults/junit/*.xml'
           reporter: junit
           fail-on-error: false
 
