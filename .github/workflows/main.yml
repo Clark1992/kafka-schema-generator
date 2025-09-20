@@ -16,11 +16,17 @@ jobs:
           dotnet-version: 8.0.x
 
       - run: dotnet restore
+        working-directory: KafkaSchemaGenerator
+
       - run: dotnet build --configuration Release
+        working-directory: KafkaSchemaGenerator
+
       - run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
+        working-directory: KafkaSchemaGenerator
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
+        working-directory: KafkaSchemaGenerator
         if: always()
         with:
           name: test-results
@@ -28,6 +34,7 @@ jobs:
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
+        working-directory: KafkaSchemaGenerator
         if: always()
         with:
           name: Unit Tests
