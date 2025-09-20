@@ -27,21 +27,11 @@ jobs:
         run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
         working-directory: KafkaSchemaGenerator
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Publish test results
+        uses: microsoft/test-reporting@v2
         with:
-          name: test-results
-          path: '**/TestResults/**/*.trx'
-
-      - name: Publish test results to GitHub
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Unit Tests
-          path: '**/TestResults/**/*.trx'
-          reporter: vstest
-          fail-on-error: false
+          test-results-files: 'KafkaSchemaGenerator/**/TestResults/*.trx'
+          fail-on-failed-tests: true
 
   update-stable:
     needs: test
