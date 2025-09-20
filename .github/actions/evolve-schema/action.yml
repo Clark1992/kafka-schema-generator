@@ -1,0 +1,29 @@
+name: "Evolve Schema"
+description: "Generate (Evolved) Schema For Kafka Schema Registry from .NET type"
+inputs:
+  assembly-path:
+    required: true
+  type-name:
+    required: true
+  format:
+    required: false
+    default: json
+  current-latest-schema-path:
+    required: true
+  output-path:
+    required: false
+    default: "output"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - run: dotnet run --project KafkaSchemaGenerator/KafkaSchemaEvolutioner.csproj \
+          ${{ inputs.assembly-path }} \
+          ${{ inputs.type-name }} \
+          ${{ inputs.format }} \
+          ${{ inputs.current-latest-schema-path }} \
+          ${{ inputs.output-path }}
+      shell: bash
+
