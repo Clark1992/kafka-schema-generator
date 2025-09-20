@@ -27,11 +27,19 @@ jobs:
         run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
         working-directory: KafkaSchemaGenerator
 
-      - name: Publish test results
-        uses: microsoft/test-reporting@v2
+      - name: Convert TRX to CTRF JSON
+        uses: ctrf-io/dotnet-ctrf-json-reporter@v1
         with:
-          test-results-files: 'KafkaSchemaGenerator/**/TestResults/*.trx'
-          fail-on-failed-tests: true
+          trx-file: 'KafkaSchemaGenerator/**/TestResults/test-results.trx'
+          output-file: 'ctrf-report.json'
+        if: always()
+
+      - name: Publish test results
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: 'ctrf-report.json'
+          github-report: true
+        if: always()
 
   update-stable:
     needs: test
