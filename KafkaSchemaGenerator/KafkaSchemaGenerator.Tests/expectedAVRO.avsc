@@ -1,0 +1,53 @@
+﻿{
+  "name": "KafkaSchemaGenerator.Tests.SampleCreatedEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "Address",
+      "type": {
+        "name": "KafkaSchemaGenerator.Tests.SampleAddress",
+        "type": "record",
+        "fields": [
+          {
+            "name": "City",
+            "type": "string"
+          },
+          {
+            "name": "Country",
+            "type": "string"
+          },
+          {
+            "name": "Id",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid"
+            }
+          },
+          {
+            "name": "Street",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Description",
+      "type": "string"
+    },
+    {
+      "name": "Name",
+      "type": "string"
+    },
+    {
+      "name": "OccurredAt",
+      "type": "string"
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

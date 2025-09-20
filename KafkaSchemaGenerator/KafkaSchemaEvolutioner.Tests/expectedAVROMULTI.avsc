@@ -1,0 +1,300 @@
+﻿[
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleCreatedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "Address",
+        "type": {
+          "name": "KafkaSchemaEvolutioner.Tests.SampleAddress",
+          "type": "record",
+          "fields": [
+            {
+              "name": "City",
+              "type": "string"
+            },
+            {
+              "name": "Id",
+              "type": {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "NewCountry",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "Street",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Description",
+        "type": "string"
+      },
+      {
+        "name": "Name",
+        "type": "string"
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewName",
+        "type": "string"
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleDescriptionChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewDescription",
+        "type": "string"
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleAddressChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewAddress",
+        "type": {
+          "name": "KafkaSchemaEvolutioner.Tests.SampleAddress",
+          "type": "record",
+          "fields": [
+            {
+              "name": "City",
+              "type": "string"
+            },
+            {
+              "name": "Id",
+              "type": {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "NewCountry",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "Street",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleAttachmentAddedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "AddedAttachment",
+        "type": [
+          "null",
+          {
+            "name": "KafkaSchemaEvolutioner.Tests.SampleAttachment",
+            "type": "record",
+            "fields": [
+              {
+                "name": "FileName",
+                "type": "string"
+              },
+              {
+                "name": "Id",
+                "type": {
+                  "type": "string",
+                  "logicalType": "uuid"
+                }
+              },
+              {
+                "name": "NewUrl",
+                "type": "string"
+              }
+            ]
+          }
+        ],
+        "default": null
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleAttachmentRemovedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "AttachmentId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaEvolutioner.Tests.SampleAttachmentUpdatedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "AttachmentId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      },
+      {
+        "name": "NewFileName",
+        "type": "string"
+      },
+      {
+        "name": "NewOccurredAt",
+        "type": [
+          "null",
+          "string"
+        ],
+        "default": null
+      },
+      {
+        "name": "NewUrl",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  }
+]

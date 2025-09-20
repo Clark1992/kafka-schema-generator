@@ -1,0 +1,256 @@
+﻿[
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleCreatedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "Address",
+        "type": {
+          "name": "KafkaSchemaGenerator.Tests.SampleAddress",
+          "type": "record",
+          "fields": [
+            {
+              "name": "City",
+              "type": "string"
+            },
+            {
+              "name": "Country",
+              "type": "string"
+            },
+            {
+              "name": "Id",
+              "type": {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "Street",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Description",
+        "type": "string"
+      },
+      {
+        "name": "Name",
+        "type": "string"
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleNameChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewName",
+        "type": "string"
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleDescriptionChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewDescription",
+        "type": "string"
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleAddressChangedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "NewAddress",
+        "type": {
+          "name": "KafkaSchemaGenerator.Tests.SampleAddress",
+          "type": "record",
+          "fields": [
+            {
+              "name": "City",
+              "type": "string"
+            },
+            {
+              "name": "Country",
+              "type": "string"
+            },
+            {
+              "name": "Id",
+              "type": {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "Street",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleAttachmentAddedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "Attachment",
+        "type": {
+          "name": "KafkaSchemaGenerator.Tests.SampleAttachment",
+          "type": "record",
+          "fields": [
+            {
+              "name": "FileName",
+              "type": "string"
+            },
+            {
+              "name": "Id",
+              "type": {
+                "type": "string",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "Url",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleAttachmentRemovedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "AttachmentId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KafkaSchemaGenerator.Tests.SampleAttachmentUpdatedEvent",
+    "type": "record",
+    "fields": [
+      {
+        "name": "AttachmentId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      },
+      {
+        "name": "NewFileName",
+        "type": "string"
+      },
+      {
+        "name": "NewUrl",
+        "type": "string"
+      },
+      {
+        "name": "OccurredAt",
+        "type": "string"
+      },
+      {
+        "name": "SampleId",
+        "type": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      }
+    ]
+  }
+]
