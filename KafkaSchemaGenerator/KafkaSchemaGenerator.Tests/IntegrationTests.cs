@@ -22,7 +22,7 @@ public class SchemaGeneratorTests
     }
 
     [Fact]
-    public void GenerateAvroSchemas_ShouldGeneratedDictionaryOfSchemas()
+    public void GenerateAvroSchemas_ShouldGenerateSchemas()
     {
         // Act
         string pathToAssembly = Assembly.GetExecutingAssembly().Location;
