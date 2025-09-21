@@ -1,5 +1,6 @@
 name: "Evolve Schema"
 description: "Generate (Evolved) Schema For Kafka Schema Registry from .NET type"
+
 inputs:
   assembly-path:
     required: true
@@ -13,19 +14,18 @@ inputs:
   output-path:
     required: false
     default: "output"
+
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
-    
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - run: dotnet run --project KafkaSchemaGenerator/KafkaSchemaEvolutioner.csproj \
-          ${{ inputs.assembly-path }} \
-          ${{ inputs.type-name }} \
-          ${{ inputs.format }} \
-          ${{ inputs.current-latest-schema-path }} \
-          ${{ inputs.output-path }}
-      shell: bash
 
+    - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner.csproj" \
+          "${{ inputs.assembly-path }}" \
+          "${{ inputs.type-name }}" \
+          "${{ inputs.format }}" \
+          "${{ inputs.current-latest-schema-path }}" \
+          "${{ inputs.output-path }}"
+      shell: bash
