@@ -26,6 +26,7 @@ runs:
       run: |
         echo "Action path: ${{ github.action_path }}"
         tree "${{ github.action_path }}"
+      shell: bash
 
     - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
