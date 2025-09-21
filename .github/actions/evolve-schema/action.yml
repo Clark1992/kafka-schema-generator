@@ -18,6 +18,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout this repo (action repo)
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ github.action_repository }}
+        ref: ${{ github.action_ref }}
+        token: ${{ github.token }}
+        
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
