@@ -22,6 +22,11 @@ runs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Show action folder structure
+      run: |
+        echo "Action path: ${{ github.action_path }}"
+        tree "${{ github.action_path }}"
+
     - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
