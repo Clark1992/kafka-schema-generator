@@ -22,7 +22,7 @@ runs:
       with:
         dotnet-version: 8.0.x
 
-    - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner.csproj" \
+    - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
