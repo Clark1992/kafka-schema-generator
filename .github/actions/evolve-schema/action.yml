@@ -18,16 +18,21 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout this repo (action repo)
-      uses: actions/checkout@v3
+    - name: Checkout Action Repo for sources (because they are not available when run action is called from another repo)
+      uses: actions/checkout@v4
       with:
-        repository: ${{ github.action_repository }}
-        ref: ${{ github.action_ref }}
-        token: ${{ github.token }}
+        repository: Clark1992/kafka-schema-generator
+        path: tools/evolve-schema-src
         
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
+    - name: Show All folder structure
+      run: |
+        echo "All tree ."
+        tree .
+      shell: bash
 
     - name: Show action folder structure
       run: |
@@ -35,7 +40,7 @@ runs:
         tree "${{ github.action_path }}"
       shell: bash
 
-    - run: dotnet run --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+    - run: dotnet run --configuration Release --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
