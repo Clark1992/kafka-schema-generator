@@ -34,13 +34,7 @@ runs:
         tree .
       shell: bash
 
-    - name: Show action folder structure
-      run: |
-        echo "Action path: ${{ github.action_path }}"
-        tree "${{ github.action_path }}"
-      shell: bash
-
-    - run: dotnet run --configuration Release --project "${{ github.action_path }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+    - run: dotnet run --configuration Release --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
