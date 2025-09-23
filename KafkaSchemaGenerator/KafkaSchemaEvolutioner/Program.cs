@@ -6,9 +6,9 @@ class JobArgs
 {
     public string AssemblyPath { get; set; }
     public string TypeName { get; set; }
+    public string CurrentLatestSchemaPath { get; set; }
     public string Format { get; set; }
-    public string DownloadedSchemas { get; set; }
-    public string OutputFolder {  get; set;  }
+    public string OutputPath {  get; set;  }
 }
 
 class Program
@@ -18,7 +18,7 @@ class Program
     {
         if (args.Length < numArgs && args.Length != 1)
         {
-            Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> [OutputFolder]");
+            Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> <CurrentLatestSchemaPath> [OutputPath]");
             Console.WriteLine("Usage: dotnet run -- params.json");
             return 1;
         }
@@ -46,8 +46,8 @@ class Program
                 paramObject.AssemblyPath,
                 paramObject.TypeName,
                 paramObject.Format,
-                paramObject.DownloadedSchemas,
-                paramObject.OutputFolder);
+                paramObject.CurrentLatestSchemaPath,
+                paramObject.OutputPath);
 
             if (!success)
             {
@@ -64,9 +64,9 @@ class Program
         string assemblyPath = args[0];
         string typeName = args[1];
         string format = args[2].ToLower();
-        string downloadedSchemas = args[3];
-        string outputFolder = args.Length > numArgs ? args[4] : "output";
+        string currentLatestSchemaPath = args[3];
+        string outputPath = args.Length > numArgs ? args[4] : "output";
 
-        return SchemaEvolutionJob.Execute(assemblyPath, typeName, format, downloadedSchemas, outputFolder) ? 0 : 1;
+        return SchemaEvolutionJob.Execute(assemblyPath, typeName, format, currentLatestSchemaPath, outputPath) ? 0 : 1;
     }
 }

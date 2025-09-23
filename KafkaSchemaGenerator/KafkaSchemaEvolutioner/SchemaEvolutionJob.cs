@@ -11,7 +11,7 @@ public class SchemaEvolutionJob
             string assemblyPath,
             string typeName,
             string format,
-            string oldSchemasFolder,
+            string currentLatestSchemaPath,
             string outputFolder)
     {
         string generatedTmp = "generated";
@@ -19,7 +19,7 @@ public class SchemaEvolutionJob
         if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
 
         string errorFormat = "{0} not set";
-        if (string.IsNullOrEmpty(oldSchemasFolder)) throw new ArgumentException(string.Format(errorFormat, nameof(oldSchemasFolder)));
+        if (string.IsNullOrEmpty(currentLatestSchemaPath)) throw new ArgumentException(string.Format(errorFormat, nameof(currentLatestSchemaPath)));
 
         bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp);
         if (!generated)
@@ -37,7 +37,7 @@ public class SchemaEvolutionJob
             var fileName = Path.GetFileName(newSchemaPath);
             var newSchemaText = File.ReadAllText(newSchemaPath, Encoding.UTF8);
 
-            var oldSchemaPath = Path.Combine(oldSchemasFolder, fileName);
+            var oldSchemaPath = Path.Combine(currentLatestSchemaPath, fileName);
 
             if (!File.Exists(oldSchemaPath))
             {
