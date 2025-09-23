@@ -38,12 +38,6 @@ runs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Show All folder structure
-      run: |
-        echo "All tree ."
-        tree .
-      shell: bash
-
     - name: Run generator with separate inputs
       if: ${{ inputs.params-file == '' }}
       run: |
