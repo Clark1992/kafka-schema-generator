@@ -1,16 +1,16 @@
 [
   {
-    "AssemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
-    "TypeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
-    "Format": "json",
-    "DownloadedSchemas": "downloaded_json",
-    "OutputFolder": "json_evolved_schema"
+    "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
+    "typeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+    "format": "json",
+    "currentLatestSchemaPath": "downloaded_json",
+    "outputPath": "json_evolved_schema"
   },
   {
-    "AssemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
-    "TypeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
-    "Format": "avromulti",
-    "DownloadedSchemas": "downloaded_avro",
-    "OutputFolder": "avromulti_evolved_schema"
+    "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
+    "typeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+    "format": "avromulti",
+    "currentLatestSchemaPath": "downloaded_avro",
+    "outputPath": "avromulti_evolved_schema"
   }
 ]

@@ -14,6 +14,11 @@ class JobArgs
 class Program
 {
     const int numArgs = 4;
+    private static readonly JsonSerializerOptions options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     static int Main(string[] args)
     {
         if (args.Length < numArgs && args.Length != 1)
@@ -38,7 +43,7 @@ class Program
         string paramsFilePath = args[0];
         var paramsText = File.Exists(paramsFilePath) ? File.ReadAllText(paramsFilePath) : throw new InvalidOperationException("Couldn't find params file.");
 
-        var paramObjects = JsonSerializer.Deserialize<List<JobArgs>>(paramsText);
+        var paramObjects = JsonSerializer.Deserialize<List<JobArgs>>(paramsText, options);
 
         foreach (var paramObject in paramObjects)
         {
