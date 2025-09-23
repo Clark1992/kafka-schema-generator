@@ -61,6 +61,8 @@ public class SchemaEvolutionJob
             SaveOutput(merged.ToString(), fileName, outputFolder);
         }
 
+        if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
+
         return true;
     }
 
