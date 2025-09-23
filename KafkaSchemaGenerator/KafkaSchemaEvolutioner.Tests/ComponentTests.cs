@@ -27,7 +27,7 @@ public class SchemaEvolutionerTests
 
         // Act
         var currentDir = Directory.GetCurrentDirectory();
-        Console.WriteLine("Current dir: ", currentDir);
+        Console.WriteLine("Current dir: {0}", currentDir);
         string[] files = Directory.GetFiles(currentDir);
 
         foreach (string file in files)
