@@ -27,7 +27,7 @@ jobs:
         working-directory: KafkaSchemaGenerator
 
       - name: Test
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=detailed"
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
         working-directory: KafkaSchemaGenerator
 
       - name: Publish test results to GitHub
