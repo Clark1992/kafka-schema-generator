@@ -23,12 +23,16 @@ inputs:
 
 runs:
   using: "composite"
+
+  env:
+    tmp-action-src-folder: "/tmp/tools/evolve-schema-src"
+
   steps:
     - name: Checkout Action Repo for sources (because they are not available when run action is called from another repo)
       uses: actions/checkout@v4
       with:
         repository: Clark1992/kafka-schema-generator
-        path: tools/evolve-schema-src
+        path: ${{ env.tmp-action-src-folder }}
         
     - uses: actions/setup-dotnet@v4
       with:
@@ -44,7 +48,7 @@ runs:
       if: ${{ inputs.params-file == '' }}
       run: |
         dotnet run --configuration Release \
-          --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+          --project "${{ env.tmp-action-src-folder }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
@@ -56,6 +60,6 @@ runs:
       if: ${{ inputs.params-file != '' }}
       run: |
         dotnet run --configuration Release \
-          --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+          --project "${{ env.tmp-action-src-folder }}/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.params-file }}"
       shell: bash
