@@ -18,6 +18,9 @@ public class SchemaEvolutionJob
 
         if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
 
+        string errorFormat = "{0} not set";
+        if (string.IsNullOrEmpty(oldSchemasFolder)) throw new ArgumentException(string.Format(errorFormat, nameof(oldSchemasFolder)));
+
         bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp);
         if (!generated)
             throw new InvalidOperationException("Schema generation failed");

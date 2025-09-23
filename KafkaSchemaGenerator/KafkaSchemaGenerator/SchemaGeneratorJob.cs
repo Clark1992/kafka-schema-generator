@@ -10,10 +10,24 @@ public enum Format
     AVRO,
 }
 
+public static class Validator
+{
+    public static void Validate(string assemblyPath, string typeName, string format, string outputFolder = null)
+    {
+        string errorFormat = "{0} not set";
+        if (string.IsNullOrEmpty(assemblyPath)) throw new ArgumentException(string.Format(errorFormat, nameof(assemblyPath)));
+        if (string.IsNullOrEmpty(typeName)) throw new ArgumentException(string.Format(errorFormat, nameof(typeName)));
+        if (string.IsNullOrEmpty(format)) throw new ArgumentException(string.Format(errorFormat, nameof(assemblyPath)));
+        if (string.IsNullOrEmpty(outputFolder)) throw new ArgumentException(string.Format(errorFormat, nameof(outputFolder)));
+    } 
+}
+
 public static class SchemaGeneratorJob
 {
     public static bool Execute(string assemblyPath, string typeName, string format, string outputFolder = null)
     {
+        Validator.Validate(assemblyPath, typeName, format, outputFolder);
+
         format = format.ToLower();
         outputFolder = outputFolder ?? "output";
 
