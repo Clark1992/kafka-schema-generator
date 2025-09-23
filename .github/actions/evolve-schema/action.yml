@@ -3,17 +3,23 @@ description: "Generate (Evolved) Schema For Kafka Schema Registry from .NET type
 
 inputs:
   assembly-path:
-    required: true
+    required: false
+    default: ""
   type-name:
-    required: true
+    required: false
+    default: ""
   format:
     required: false
-    default: json
+    default: ""
   current-latest-schema-path:
-    required: true
+    required: false
+    default: ""
   output-path:
     required: false
-    default: "output"
+    default: ""
+  params-file:
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -34,10 +40,22 @@ runs:
         tree .
       shell: bash
 
-    - run: dotnet run --configuration Release --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+    - name: Run generator with separate inputs
+      if: ${{ inputs.params-file == '' }}
+      run: |
+        dotnet run --configuration Release \
+          --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
           "${{ inputs.current-latest-schema-path }}" \
           "${{ inputs.output-path }}"
+      shell: bash
+
+    - name: Run generator with params file
+      if: ${{ inputs.params-file != '' }}
+      run: |
+        dotnet run --configuration Release \
+          --project "tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+          "${{ inputs.params-file }}"
       shell: bash
