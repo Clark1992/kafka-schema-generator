@@ -26,6 +26,15 @@ public class SchemaEvolutionerTests
         if (Directory.Exists(avroOutput)) Directory.Delete(avroOutput, true);
 
         // Act
+        var currentDir = Directory.GetCurrentDirectory();
+        Console.WriteLine("Current dir: ", currentDir);
+        string[] files = Directory.GetFiles(currentDir);
+
+        foreach (string file in files)
+        {
+            Console.WriteLine(Path.GetFileName(file));
+        }
+
         var process = Process.Start(new ProcessStartInfo
         {
             FileName = "KafkaSchemaEvolutioner.exe",
