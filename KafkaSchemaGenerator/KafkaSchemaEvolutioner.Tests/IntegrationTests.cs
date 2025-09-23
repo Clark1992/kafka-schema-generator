@@ -11,6 +11,7 @@ public class SchemaEvolutionerTests
         var defaultTmpFolder = "generated";
         if (Directory.Exists(defaultTmpFolder)) Directory.Delete(defaultTmpFolder, true);
     }
+
     [Fact]
 
     public void GenerateJsonSchema_ShouldGenerateSchema()

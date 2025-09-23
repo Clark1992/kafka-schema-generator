@@ -15,6 +15,9 @@ public class SchemaEvolutionJob
             string outputFolder)
     {
         string generatedTmp = "generated";
+
+        if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
+
         bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp);
         if (!generated)
             throw new InvalidOperationException("Schema generation failed");
