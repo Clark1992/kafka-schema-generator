@@ -28,8 +28,12 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: Clark1992/kafka-schema-generator
-        path: /tmp/tools/evolve-schema-src
-        
+        path: evolve-schema-src
+
+    - name: Move to /tmp
+      run: mv evolve-schema-src /tmp/evolve-schema-src
+      shell: bash
+
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
@@ -44,7 +48,7 @@ runs:
       if: ${{ inputs.params-file == '' }}
       run: |
         dotnet run --configuration Release \
-          --project "/tmp/tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+          --project "/tmp/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.assembly-path }}" \
           "${{ inputs.type-name }}" \
           "${{ inputs.format }}" \
@@ -56,6 +60,6 @@ runs:
       if: ${{ inputs.params-file != '' }}
       run: |
         dotnet run --configuration Release \
-          --project "/tmp/tools/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
+          --project "/tmp/evolve-schema-src/KafkaSchemaGenerator/KafkaSchemaEvolutioner/KafkaSchemaEvolutioner.csproj" \
           "${{ inputs.params-file }}"
       shell: bash
