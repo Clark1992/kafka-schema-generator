@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -17,6 +17,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\KafkaSchemaEvolutioner\KafkaSchemaEvolutioner.csproj" />
+	  <ProjectReference Include="..\KafkaSchemaGenerator.Tests\KafkaSchemaGenerator.Tests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,37 +25,85 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="downloaded_avro\SampleAddressChangedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-key.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleAttachmentAddedEvent.avsc">
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleEventKey-key.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleAttachmentRemovedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleAttachmentUpdatedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleAddressChangedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleCreatedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleAttachmentAddedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleDescriptionChangedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleAttachmentRemovedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleAttachmentUpdatedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\SampleNameChangedEvent.avsc">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleCreatedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_json\ISampleEvent.json">
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleDescriptionChangedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\someTopic-KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleAddressChangedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleAttachmentAddedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleAttachmentRemovedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleAttachmentUpdatedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleCreatedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleDescriptionChangedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.SampleEventKey-key.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_json\someTopic-key.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_json\someTopic-value.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.ISampleEvent-value.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="expectedAVRO-key.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="expectedAVROMULTI.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="expectedJSON.json">
+	  <None Update="expectedJSON-key.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="expectedJSON-value.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="params.json">

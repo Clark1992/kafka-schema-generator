@@ -1,0 +1,32 @@
+{
+  "name": "KafkaSchemaEvolutioner.Tests.SampleAttachmentUpdatedEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "AttachmentId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "NewFileName",
+      "type": "string"
+    },
+    {
+      "name": "NewUrl",
+      "type": "string"
+    },
+    {
+      "name": "OccurredAt",
+      "type": "string"
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

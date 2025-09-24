@@ -1,0 +1,24 @@
+{
+  "name": "KafkaSchemaEvolutioner.Tests.SampleAttachmentRemovedEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "AttachmentId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "OccurredAt",
+      "type": "string"
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

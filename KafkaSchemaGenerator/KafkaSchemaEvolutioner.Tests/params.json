@@ -4,7 +4,8 @@
     "typeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
     "format": "json",
     "currentLatestSchemaPath": "downloaded_json",
-    "outputPath": "json_evolved_schema"
+    "outputPath": "json_evolved_schema",
+    "topic": "someTopic"
   },
   {
     "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",

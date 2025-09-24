@@ -8,11 +8,12 @@ class JobArgs
     public string CurrentLatestSchemaPath { get; set; }
     public string Format { get; set; }
     public string OutputPath {  get; set;  }
+    public string Topic {  get; set;  }
 }
 
 class Program
 {
-    const int numArgs = 4;
+    const int numArgs = 5;
     private static readonly JsonSerializerOptions options = new()
     {
         PropertyNameCaseInsensitive = true
@@ -22,7 +23,7 @@ class Program
     {
         if (args.Length < numArgs && args.Length != 1)
         {
-            Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> <CurrentLatestSchemaPath> [OutputPath]");
+            Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> <CurrentLatestSchemaPath> <OutputPath> [Topic]");
             Console.WriteLine("Usage: dotnet run -- params.json");
             return 1;
         }
@@ -51,11 +52,12 @@ class Program
                 paramObject.TypeName,
                 paramObject.Format,
                 paramObject.CurrentLatestSchemaPath,
-                paramObject.OutputPath);
+                paramObject.OutputPath,
+                paramObject.Topic);
 
             if (!success)
             {
-                Console.WriteLine("SchemaEvolutionJob.Execute return failure. Stopping...");
+                Console.WriteLine("SchemaEvolutionJob.Execute returns failure. Stopping...");
                 return 1;
             }
         }
@@ -69,8 +71,9 @@ class Program
         string typeName = args[1];
         string format = args[2].ToLower();
         string currentLatestSchemaPath = args[3];
-        string outputPath = args.Length > numArgs ? args[4] : "output";
+        string outputPath = args[4];
+        string topic = args.Length > numArgs ? args[5] : null;
 
-        return SchemaEvolutionJob.Execute(assemblyPath, typeName, format, currentLatestSchemaPath, outputPath) ? 0 : 1;
+        return SchemaEvolutionJob.Execute(assemblyPath, typeName, format, currentLatestSchemaPath, outputPath, topic) ? 0 : 1;
     }
 }

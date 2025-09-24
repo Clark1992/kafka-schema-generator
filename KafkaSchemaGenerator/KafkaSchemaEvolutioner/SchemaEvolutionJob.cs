@@ -12,16 +12,16 @@ public class SchemaEvolutionJob
             string typeName,
             string format,
             string currentLatestSchemaPath,
-            string outputFolder)
+            string outputFolder,
+            string topic)
     {
         string generatedTmp = "generated";
 
         if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
 
-        string errorFormat = "{0} not set";
-        if (string.IsNullOrEmpty(currentLatestSchemaPath)) throw new ArgumentException(string.Format(errorFormat, nameof(currentLatestSchemaPath)));
+        Validate(currentLatestSchemaPath);
 
-        bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp);
+        bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp, topic);
         if (!generated)
             throw new InvalidOperationException("Schema generation failed");
 
@@ -64,6 +64,12 @@ public class SchemaEvolutionJob
         if (Directory.Exists(generatedTmp)) Directory.Delete(generatedTmp, true);
 
         return true;
+    }
+
+    private static void Validate(string currentLatestSchemaPath)
+    {
+        string errorFormat = "{0} not set";
+        if (string.IsNullOrEmpty(currentLatestSchemaPath)) throw new ArgumentException(string.Format(errorFormat, nameof(currentLatestSchemaPath)));
     }
 
     private static void SaveOutput(string schema, string fileName, string outputFolder)

@@ -1,3 +1,4 @@
+using KafkaSchemaGenerator.Tests.Common;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
@@ -8,8 +9,10 @@ public class SchemaEvolutionerTests
 {
     public SchemaEvolutionerTests()
     {
-        var defaultTmpFolder = "generated";
-        if (Directory.Exists(defaultTmpFolder)) Directory.Delete(defaultTmpFolder, true);
+        List<string> dirs = ["avro_evolved_schema", "avromulti_evolved_schema", "json_evolved_schema", "generated"];
+
+        foreach (var dir in dirs)
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
     }
 
     [Fact]
@@ -54,16 +57,16 @@ public class SchemaEvolutionerTests
 
         // json
         Assert.True(process.ExitCode == 0);
-        var expectedJSON = File.ReadAllText("expectedJSON.json");
-        var actual = File.ReadAllText($"json_evolved_schema/ISampleEvent.json");
+        var expectedJSON = File.ReadAllText("expectedJSON-value.json");
+        var actual = File.ReadAllText($"json_evolved_schema/someTopic-value.json");
         Assert.NotNull(actual);
         Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expectedJSON)));
 
+        // avromulti
         var expected = File.ReadAllText("expectedAVROMULTI.avsc");
         var expectedSchemas = JArray.Parse(expected);
 
-        // avromulti
-        var actualSchemas = LoadFilesFromDirectory("avromulti_evolved_schema");
+        var actualSchemas = Utils.LoadFilesFromDirectory("avromulti_evolved_schema");
 
         Assert.NotNull(actualSchemas);
         Assert.Equal(actualSchemas.Count, expectedSchemas.Count);
@@ -80,23 +83,5 @@ public class SchemaEvolutionerTests
 
             Assert.True(JToken.DeepEquals(actualJson, expectedJson));
         }
-    }
-
-    public static Dictionary<string, string> LoadFilesFromDirectory(string directoryPath)
-    {
-        if (!Directory.Exists(directoryPath))
-            throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
-
-        var result = new Dictionary<string, string>();
-
-        foreach (var filePath in Directory.GetFiles(directoryPath))
-        {
-            string fileName = Path.GetFileName(filePath);
-            string content = File.ReadAllText(filePath);
-
-            result[fileName] = content;
-        }
-
-        return result;
     }
 }

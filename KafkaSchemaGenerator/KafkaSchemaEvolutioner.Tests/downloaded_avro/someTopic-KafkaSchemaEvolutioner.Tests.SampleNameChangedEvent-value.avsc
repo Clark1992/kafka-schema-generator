@@ -1,0 +1,21 @@
+{
+  "name": "KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "NewName",
+      "type": "string"
+    },
+    {
+      "name": "OccurredAt",
+      "type": "string"
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

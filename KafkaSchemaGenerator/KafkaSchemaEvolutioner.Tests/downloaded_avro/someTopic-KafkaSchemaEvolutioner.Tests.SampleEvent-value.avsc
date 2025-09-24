@@ -1,0 +1,17 @@
+{
+  "name": "KafkaSchemaEvolutioner.Tests.SampleEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "OccurredAt",
+      "type": "string"
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

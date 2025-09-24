@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SampleEventKey",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "SampleId": {
+      "type": "string",
+      "format": "guid"
+    }
+  }
+}

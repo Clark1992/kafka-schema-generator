@@ -19,7 +19,7 @@ public class SchemaGeneratorTests
         var schema = _generator.GenerateJsonSchema(typeof(ISampleEvent));
 
         // Assert
-        var expected = File.ReadAllText("expectedJSON.json");
+        var expected = File.ReadAllText("expectedJSON-value.json");
         Assert.NotNull(schema);
         Assert.Equal(expected, schema);
     }
@@ -59,7 +59,7 @@ public class SchemaGeneratorTests
 
         // Assert
         var actualJson = JObject.Parse(schema);
-        var expected = File.ReadAllText("expectedAVRO.avsc");
+        var expected = File.ReadAllText("expectedAVRO-value.avsc");
         var expectedJson = JObject.Parse(expected);
 
         Assert.NotNull(schema);

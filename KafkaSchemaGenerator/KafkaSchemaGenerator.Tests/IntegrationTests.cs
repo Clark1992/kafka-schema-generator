@@ -1,11 +1,20 @@
+using KafkaSchemaGenerator.Tests.Common;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 
 namespace KafkaSchemaGenerator.Tests.IntegrationTests;
 
 [Collection(nameof(SchemaGeneratorTests))]
-public class SchemaGeneratorTests : IDisposable
+public class SchemaGeneratorTests
 {
+    public SchemaGeneratorTests()
+    {
+        List<string> dirs = ["avro_schema", "avromulti_schema", "json_schema"];
+
+        foreach (var dir in dirs)
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+    }
+
     [Theory]
     [InlineData(
         "KafkaSchemaGenerator.Tests.ISampleEvent",
@@ -50,20 +59,17 @@ public class SchemaGeneratorTests : IDisposable
         "KafkaSchemaGenerator.Tests.ISampleEvent",
         null,
         "",
-        "-value",
-        "expectedAVROMULTI.avsc")]
+        "-value")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.ISampleEvent",
         "someTopic",
         "someTopic-",
-        "-value",
-        "expectedAVROMULTI.avsc")]
+        "-value")]
     public void GenerateAvroSchemas_ShouldGenerateSchemas(
         string type,
         string topic,
         string prefix,
-        string suffix,
-        string expectedAvroFile)
+        string suffix)
     {
         // Act
         string pathToAssembly = Assembly.GetExecutingAssembly().Location;
@@ -71,10 +77,10 @@ public class SchemaGeneratorTests : IDisposable
         var result = SchemaGeneratorJob.Execute(pathToAssembly, type, "avromulti", outputFolder, topic);
 
         // Assert
-        var expected = File.ReadAllText(expectedAvroFile);
+        var expected = File.ReadAllText("expectedAVROMULTI.avsc");
         var expectedSchemas = JArray.Parse(expected);
 
-        var actualSchemas = LoadFilesFromDirectory(outputFolder);
+        var actualSchemas = Utils.LoadFilesFromDirectory(outputFolder);
 
         Assert.NotNull(actualSchemas);
         Assert.Equal(actualSchemas.Count, expectedSchemas.Count);
@@ -90,7 +96,7 @@ public class SchemaGeneratorTests : IDisposable
                 .FirstOrDefault(o => o["name"]?.Value<string>() == targetName);
 
             Assert.True(JToken.DeepEquals(actualJson, expectedJson));
-            AssertFileName(actual.Key, targetName, prefix, suffix, "avsc");
+            Utils.AssertFileName(actual.Key, targetName, prefix, suffix, "avsc");
         }
     }
 
@@ -132,33 +138,4 @@ public class SchemaGeneratorTests : IDisposable
         Assert.NotNull(actual);
         Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expected)));
     }
-
-    public void Dispose()
-    {
-        List<string> dirs = ["avro_schema", "avromulti_schema", "json_schema"];
-
-        foreach (var dir in dirs)
-            if (Directory.Exists(dir)) Directory.Delete(dir, true);
-    }
-
-    private static Dictionary<string, string> LoadFilesFromDirectory(string directoryPath)
-    {
-        if (!Directory.Exists(directoryPath))
-            throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
-
-        var result = new Dictionary<string, string>();
-
-        foreach (var filePath in Directory.GetFiles(directoryPath))
-        {
-            string fileName = Path.GetFileName(filePath);
-            string content = File.ReadAllText(filePath);
-
-            result[fileName] = content;
-        }
-
-        return result;
-    }
-
-    private static void AssertFileName(string fileName, string typeName, string prefix, string suffix, string ext) =>
-        Assert.Equal(fileName, $"{prefix}{typeName}{suffix}.{ext}");
 }
