@@ -10,25 +10,40 @@ public enum Format
     AVRO,
 }
 
+public enum SubjectNameStrategy
+{
+    Topic,
+    Record
+}
+
 public static class Validator
 {
-    public static void Validate(string assemblyPath, string typeName, string format, string outputFolder = null)
+    public static void Validate(string assemblyPath, string typeName, string format, string outputFolder = null, string topic = null)
     {
         string errorFormat = "{0} not set";
         if (string.IsNullOrEmpty(assemblyPath)) throw new ArgumentException(string.Format(errorFormat, nameof(assemblyPath)));
         if (string.IsNullOrEmpty(typeName)) throw new ArgumentException(string.Format(errorFormat, nameof(typeName)));
         if (string.IsNullOrEmpty(format)) throw new ArgumentException(string.Format(errorFormat, nameof(assemblyPath)));
         if (string.IsNullOrEmpty(outputFolder)) throw new ArgumentException(string.Format(errorFormat, nameof(outputFolder)));
+        if (topic != null && topic.Trim().Length == 0) throw new ArgumentException(string.Format(errorFormat, nameof(outputFolder)));
     } 
 }
 
 public static class SchemaGeneratorJob
 {
-    public static bool Execute(string assemblyPath, string typeName, string format, string outputFolder = null)
+    public static bool Execute(string assemblyPath, string typeName, string format, string outputFolder = null, string topic = null)
     {
-        Validator.Validate(assemblyPath, typeName, format, outputFolder);
+        Validator.Validate(assemblyPath, typeName, format, outputFolder, topic);
 
         format = format.ToLower();
+
+        var subjectNameStrategy = SubjectNameStrategy.Record;
+        if (topic != null)
+        {
+            subjectNameStrategy = SubjectNameStrategy.Topic;
+            topic = topic.Trim();
+        }
+
         outputFolder = outputFolder ?? "output";
 
         if (!File.Exists(assemblyPath))
@@ -52,39 +67,52 @@ public static class SchemaGeneratorJob
         {
             case "json":
                 schemaJson = schemaGenerator.GenerateJsonSchema(type);
-                SaveTofile(outputFolder, type, schemaJson, Format.JSON);
+                SaveTofile(outputFolder, type, schemaJson, Format.JSON, subjectNameStrategy, topic);
                 break;
 
             case "avro":
                 schemaJson = schemaGenerator.GenerateAvroSchema(type);
-                SaveTofile(outputFolder, type, schemaJson, Format.AVRO);
+                SaveTofile(outputFolder, type, schemaJson, Format.AVRO, subjectNameStrategy, topic);
                 break;
 
             case "avromulti":
-                GenerateAvroMulti(schemaGenerator, type, outputFolder);
+                GenerateAvroMulti(schemaGenerator, type, outputFolder, subjectNameStrategy, topic);
                 break;
 
             default:
-                Console.WriteLine("Unknown format, use 'json' or 'avro'");
+                Console.WriteLine("Unknown format, use 'json' or 'avro' or 'avromulti'");
                 return false;
         }
 
         return true;
     }
 
-    private static void SaveTofile(string outputFolder, Type type, string schemaJson, Format format)
+    private static void SaveTofile(
+        string outputFolder,
+        Type type,
+        string schemaJson,
+        Format format,
+        SubjectNameStrategy strategy,
+        string topic)
     {
-        FileWriter writer = new FileWriter(Path.ChangeExtension(Path.Combine(outputFolder, type.Name), GetExt(format)));
+        var fileName = FileNameBuilder.BuildFileName(strategy, type, topic);
+        FileWriter writer = new($"{Path.Combine(outputFolder, fileName)}.{GetExt(format)}");
         writer.WriteSchema(schemaJson);
     }
 
-    private static void GenerateAvroMulti(SchemaGenerator schemaGenerator, Type type, string outputFolder)
+    private static void GenerateAvroMulti(
+        SchemaGenerator schemaGenerator,
+        Type type,
+        string outputFolder,
+        SubjectNameStrategy strategy,
+        string topic)
     {
         var schemaJsons = schemaGenerator.GenerateAvroSchemas(type);
 
         foreach (var schemaJson in schemaJsons)
         {
-            var writer = new FileWriter(Path.ChangeExtension(Path.Combine(outputFolder, schemaJson.Key), GetExt(Format.AVRO)));
+            var fileName = FileNameBuilder.BuildAvroMultiFileName(strategy, schemaJson.Key, topic);
+            var writer = new FileWriter($"{Path.Combine(outputFolder, fileName)}.{GetExt(Format.AVRO)}");
             writer.WriteSchema(schemaJson.Value);
         }
     }

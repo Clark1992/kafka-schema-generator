@@ -1,5 +1,4 @@
 ﻿using KafkaSchemaEvolutioner;
-using System.Diagnostics;
 using System.Text.Json;
 
 class JobArgs

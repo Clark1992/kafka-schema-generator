@@ -16,6 +16,8 @@ public interface ISampleEvent
     DateTimeOffset OccurredAt { get; set; }
 }
 
+public record SampleEventKey(Guid SampleId);
+
 public record SampleEvent(Guid SampleId) : ISampleEvent
 {
     public DateTimeOffset OccurredAt { get; set; }

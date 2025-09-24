@@ -1,0 +1,13 @@
+﻿{
+  "name": "KafkaSchemaGenerator.Tests.SampleEventKey",
+  "type": "record",
+  "fields": [
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

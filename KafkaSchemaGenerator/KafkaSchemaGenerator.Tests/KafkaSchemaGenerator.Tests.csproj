@@ -24,13 +24,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="expectedAVRO.avsc">
+    <None Update="expectedAVRO-value.avsc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="expectedAVRO-key.avsc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="expectedAVROMULTI.avsc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="expectedJSON.json">
+    <None Update="expectedJSON-key.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="expectedJSON-value.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

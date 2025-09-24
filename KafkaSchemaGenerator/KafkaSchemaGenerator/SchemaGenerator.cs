@@ -54,7 +54,7 @@ public class SchemaGenerator : ISchemaGenerator
             using var sr = new StreamReader(ms, Encoding.UTF8);
             var schemaJson = sr.ReadToEnd();
 
-            results[type.Name] = schemaJson;
+            results[type.FullName] = schemaJson;
         }
 
         return results;

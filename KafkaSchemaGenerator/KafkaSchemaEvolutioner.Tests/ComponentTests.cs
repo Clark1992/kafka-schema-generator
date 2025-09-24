@@ -1,7 +1,5 @@
 using Newtonsoft.Json.Linq;
-using System;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace KafkaSchemaEvolutioner.Tests.ComponentTests;
 

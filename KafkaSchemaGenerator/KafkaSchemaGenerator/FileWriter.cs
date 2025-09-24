@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KafkaSchemaGenerator;
 
@@ -11,9 +7,6 @@ using System.IO;
 public interface IFileWriter
 {
     string OutputPath { get; }
-
-    bool Exists();
-    string Read();
     void WriteSchema(string schemaJson);
 }
 
@@ -36,8 +29,36 @@ public class FileWriter : IFileWriter
 
         File.WriteAllText(OutputPath, schemaJson);
     }
+}
 
-    public bool Exists() => File.Exists(OutputPath);
+public static class FileNameBuilder
+{
+    public static string BuildFileName(SubjectNameStrategy strategy, Type type, string topic)
+    {
+        string suffix = GetSuffix(type.FullName);
+        return strategy switch
+        {
+            SubjectNameStrategy.Topic => $"{topic}-{suffix}",
+            SubjectNameStrategy.Record => $"{type.FullName}-{suffix}",
+            _ => throw new InvalidOperationException("Wrong SubjectNameStrategy")
+        };
+    }
 
-    public string Read() => File.ReadAllText(OutputPath);
+    public static string BuildAvroMultiFileName(SubjectNameStrategy strategy, string fullTypeName, string topic)
+    {
+        string suffix = GetSuffix(fullTypeName);
+        return strategy switch
+        {
+            SubjectNameStrategy.Topic => $"{topic}-{fullTypeName}-{suffix}",
+            SubjectNameStrategy.Record => $"{fullTypeName}-{suffix}",
+            _ => throw new InvalidOperationException("Wrong SubjectNameStrategy")
+        };
+    }
+
+    private static string GetSuffix(string fullTypeName)
+    {
+        var isKey = fullTypeName.EndsWith("key", StringComparison.OrdinalIgnoreCase);
+        var suffix = isKey ? "key" : "value";
+        return suffix;
+    }
 }
