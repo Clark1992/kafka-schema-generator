@@ -20,7 +20,31 @@ public interface ISchemaGenerator
 
 public class SchemaGenerator : ISchemaGenerator
 {
-    public string GenerateJsonSchema(Type type) => JsonSchema.FromType(type).ToJson();
+    public string GenerateJsonSchema(Type type)
+    {
+        var sourceTypeNames = type.Assembly.GetTypes()
+            .Where(t =>
+                t.IsClass &&
+                !t.IsAbstract &&
+                type.IsAssignableFrom(t))
+            .Select(x => x.Name)
+            .ToHashSet();
+
+        var schema = JsonSchema.FromType(type);
+
+        foreach (var def in schema.Definitions)
+        {
+            if (!sourceTypeNames.Contains(def.Key)) 
+                continue;
+
+            schema.OneOf.Add(new JsonSchema
+            {
+                Reference = def.Value
+            });
+        }
+
+        return schema.ToJson();
+    }
 
     public Dictionary<string, string> GenerateAvroSchemas(Type baseType)
     {
