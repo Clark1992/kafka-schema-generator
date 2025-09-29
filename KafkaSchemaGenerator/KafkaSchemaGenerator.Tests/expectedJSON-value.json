@@ -2,60 +2,51 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "ISampleEvent",
   "type": "object",
-  "discriminator": {
-    "propertyName": "$type"
-  },
-  "x-abstract": true,
-  "additionalProperties": false,
-  "required": [
-    "$type"
-  ],
   "definitions": {
     "SampleCreatedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Name": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Description": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Address": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SampleAddress"
+            }
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleCreatedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "Name": {
-              "type": [
-                "null",
-                "string"
-              ]
-            },
-            "Description": {
-              "type": [
-                "null",
-                "string"
-              ]
-            },
-            "Address": {
-              "oneOf": [
-                {
-                  "type": "null"
-                },
-                {
-                  "$ref": "#/definitions/SampleAddress"
-                }
-              ]
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleAddress": {
       "type": "object",
@@ -63,7 +54,7 @@
       "properties": {
         "Id": {
           "type": "string",
-          "format": "guid"
+          "format": "uuid"
         },
         "Street": {
           "type": [
@@ -85,147 +76,129 @@
         }
       }
     },
-    "SampleEvent": {
+    "SampleNameChangedEvent": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-        "SampleId": {
-          "type": "string",
-          "format": "guid"
-        },
-        "OccurredAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "SampleNameChangedEvent": {
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "NewName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleNameChangedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "NewName": {
-              "type": [
-                "null",
-                "string"
-              ]
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleDescriptionChangedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "NewDescription": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleDescriptionChangedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "NewDescription": {
-              "type": [
-                "null",
-                "string"
-              ]
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleAddressChangedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "NewAddress": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SampleAddress"
+            }
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleAddressChangedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "NewAddress": {
-              "oneOf": [
-                {
-                  "type": "null"
-                },
-                {
-                  "$ref": "#/definitions/SampleAddress"
-                }
-              ]
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleAttachmentAddedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Attachment": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SampleAttachment"
+            }
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleAttachmentAddedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "Attachment": {
-              "oneOf": [
-                {
-                  "type": "null"
-                },
-                {
-                  "$ref": "#/definitions/SampleAttachment"
-                }
-              ]
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleAttachment": {
       "type": "object",
@@ -233,7 +206,7 @@
       "properties": {
         "Id": {
           "type": "string",
-          "format": "guid"
+          "format": "uuid"
         },
         "FileName": {
           "type": [
@@ -250,72 +223,70 @@
       }
     },
     "SampleAttachmentRemovedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AttachmentId": {
+          "type": "string",
+          "format": "uuid"
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleAttachmentRemovedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "AttachmentId": {
-              "type": "string",
-              "format": "guid"
-            }
-          }
-        }
-      ]
+      }
     },
     "SampleAttachmentUpdatedEvent": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "$type"
       ],
       "properties": {
+        "SampleId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "OccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AttachmentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "NewFileName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "NewUrl": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
         "$type": {
           "type": "string",
           "enum": [
             "SampleAttachmentUpdatedEvent"
           ]
         }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/SampleEvent"
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "AttachmentId": {
-              "type": "string",
-              "format": "guid"
-            },
-            "NewFileName": {
-              "type": [
-                "null",
-                "string"
-              ]
-            },
-            "NewUrl": {
-              "type": [
-                "null",
-                "string"
-              ]
-            }
-          }
-        }
-      ]
+      }
     }
   },
   "oneOf": [

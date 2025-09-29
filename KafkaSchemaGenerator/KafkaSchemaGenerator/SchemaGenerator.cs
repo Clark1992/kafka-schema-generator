@@ -1,6 +1,8 @@
 ﻿using Chr.Avro.Abstract;
 using Chr.Avro.Representation;
 using NJsonSchema;
+using NJsonSchema.Generation;
+using NJsonSchema.NewtonsoftJson.Generation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,11 +25,29 @@ public class SchemaGenerator : ISchemaGenerator
 {
     public string GenerateJsonSchema(Type type)
     {
-        var discriminator = type
+        var schema = JsonSchema.FromType(
+            type, 
+            new NewtonsoftJsonSchemaGeneratorSettings 
+            { 
+                FlattenInheritanceHierarchy = true,
+            });
+
+        var polymorphic = type
             .GetCustomAttributes(false)
             .OfType<JsonPolymorphicAttribute>()
-            .Select(x => x.TypeDiscriminatorPropertyName)
             .FirstOrDefault();
+
+        if (polymorphic is not null)
+        {
+            ProcessPolymorphic(type, schema, polymorphic);
+        }
+
+        return schema.ToJson();
+    }
+
+    private static void ProcessPolymorphic(Type type, JsonSchema schema, JsonPolymorphicAttribute polymorphic)
+    {
+        var discriminator = polymorphic.TypeDiscriminatorPropertyName;
 
         var configedDerivedTypes = type
             .GetCustomAttributes(false)
@@ -43,31 +63,91 @@ public class SchemaGenerator : ISchemaGenerator
             .Select(x => x.Name)
             .ToHashSet();
 
-        var schema = JsonSchema.FromType(type);
-
         foreach (var def in schema.Definitions)
         {
             if (!sourceTypeNames.Contains(def.Key))
                 continue;
-            
+
             BuildOneOf(schema, def);
-            AddConstTypeProp(schema, def, discriminator);
-            schema.Properties.Clear();
+            AddConstTypeProp(def, discriminator);
+            FixGuids(def.Value);
         }
 
-        return schema.ToJson();
+        CleanRoot(schema);
     }
 
-    private static void AddConstTypeProp(JsonSchema schema, KeyValuePair<string, JsonSchema> def, string discriminator)
+    private static void FixGuids(JsonSchema def)
+    {
+        foreach (var property in def.Properties.Values)
+        {
+            FixGuid(property);
+        }
+    }
+
+    private static void FixGuid(JsonSchema schema)
+    {
+        if (schema == null)
+            return;
+
+        if (schema.Format == "guid")
+            schema.Format = "uuid";
+
+        foreach (var property in schema.Properties.Values)
+        {
+            FixGuid(property);
+        }
+
+        foreach (var definition in schema.Definitions.Values)
+        {
+            FixGuid(definition);
+        }
+
+        if (schema.Item != null)
+            FixGuid(schema.Item);
+
+        if (schema.AdditionalPropertiesSchema != null)
+            FixGuid(schema.AdditionalPropertiesSchema);
+
+        foreach (var subSchema in schema.AllOf)
+        {
+            FixGuid(subSchema);
+        }
+
+        foreach (var subSchema in schema.AnyOf)
+        {
+            FixGuid(subSchema);
+        }
+
+        foreach (var subSchema in schema.OneOf)
+        {
+            FixGuid(subSchema);
+        }
+
+        if (schema.Reference != null)
+            FixGuid(schema.Reference);
+    }
+
+    private static void CleanRoot(JsonSchema schema)
+    {
+        schema.Properties.Clear();
+        schema.RequiredProperties.Clear();
+        schema.DiscriminatorObject = null;
+        schema.IsAbstract = false;
+        schema.AllowAdditionalProperties = true;
+    }
+
+    private static void AddConstTypeProp(KeyValuePair<string, JsonSchema> def, string discriminator)
     {
         if (string.IsNullOrEmpty(discriminator))
             return;
 
-        def.Value.Properties[discriminator] = new JsonSchemaProperty
+        var typeSchemaProp = new JsonSchemaProperty
         {
             Type = JsonObjectType.String,
             Enumeration = { def.Key }
         };
+
+        def.Value.Properties[discriminator] = typeSchemaProp;
         def.Value.RequiredProperties.Add(discriminator);
     }
 
