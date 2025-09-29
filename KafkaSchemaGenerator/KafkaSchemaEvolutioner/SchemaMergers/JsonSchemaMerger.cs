@@ -33,12 +33,10 @@ public static class JsonSchemaMerger
                     if (newDef.ContainsKey("properties") && oldDef.ContainsKey("properties"))
                     {
                         MergePropertiesSchema(oldDef, newDef);
-                    } else if (newDef.ContainsKey("allOf") && oldDef.ContainsKey("allOf"))
+                    } 
+                    if (newDef.ContainsKey("allOf") && oldDef.ContainsKey("allOf"))
                     {
                         MergePropertiesInAllOf(oldDef, newDef);
-                    } else
-                    {
-                        throw new InvalidOperationException("Schema mismatch. Dont know how to merge this.");
                     }
                 }
                 

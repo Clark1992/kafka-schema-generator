@@ -22,20 +22,20 @@ public class SchemaEvolutionerTests
         "KafkaSchemaEvolutioner.Tests.ISampleEvent-value.json",
         "expectedJSON-value.json")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey",
-        null,
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey-key.json",
-        "expectedJSON-key.json")]
+       "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+       null,
+       "KafkaSchemaEvolutioner.Tests.SampleEventKey-key.json",
+       "expectedJSON-key.json")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.ISampleEvent",
-        "someTopic",
-        "someTopic-value.json",
-        "expectedJSON-value.json")]
+       "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+       "someTopic",
+       "someTopic-value.json",
+       "expectedJSON-value.json")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey",
-        "someTopic",
-        "someTopic-key.json",
-        "expectedJSON-key.json")]
+       "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+       "someTopic",
+       "someTopic-key.json",
+       "expectedJSON-key.json")]
 
     public void GenerateJsonSchema_ShouldGenerateSchema(
         string type,

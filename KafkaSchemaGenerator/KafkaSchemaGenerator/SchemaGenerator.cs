@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace KafkaSchemaGenerator;
 
@@ -22,11 +23,23 @@ public class SchemaGenerator : ISchemaGenerator
 {
     public string GenerateJsonSchema(Type type)
     {
+        var discriminator = type
+            .GetCustomAttributes(false)
+            .OfType<JsonPolymorphicAttribute>()
+            .Select(x => x.TypeDiscriminatorPropertyName)
+            .FirstOrDefault();
+
+        var configedDerivedTypes = type
+            .GetCustomAttributes(false)
+            .OfType<JsonDerivedTypeAttribute>()
+            .Select(x => x.DerivedType.Name);
+
         var sourceTypeNames = type.Assembly.GetTypes()
             .Where(t =>
                 t.IsClass &&
                 !t.IsAbstract &&
-                type.IsAssignableFrom(t))
+                type.IsAssignableFrom(t) &&
+                configedDerivedTypes.Contains(t.Name))
             .Select(x => x.Name)
             .ToHashSet();
 
@@ -34,16 +47,36 @@ public class SchemaGenerator : ISchemaGenerator
 
         foreach (var def in schema.Definitions)
         {
-            if (!sourceTypeNames.Contains(def.Key)) 
+            if (!sourceTypeNames.Contains(def.Key))
                 continue;
-
-            schema.OneOf.Add(new JsonSchema
-            {
-                Reference = def.Value
-            });
+            
+            BuildOneOf(schema, def);
+            AddConstTypeProp(schema, def, discriminator);
+            schema.Properties.Clear();
         }
 
         return schema.ToJson();
+    }
+
+    private static void AddConstTypeProp(JsonSchema schema, KeyValuePair<string, JsonSchema> def, string discriminator)
+    {
+        if (string.IsNullOrEmpty(discriminator))
+            return;
+
+        def.Value.Properties[discriminator] = new JsonSchemaProperty
+        {
+            Type = JsonObjectType.String,
+            Enumeration = { def.Key }
+        };
+        def.Value.RequiredProperties.Add(discriminator);
+    }
+
+    private static void BuildOneOf(JsonSchema schema, KeyValuePair<string, JsonSchema> def)
+    {
+        schema.OneOf.Add(new JsonSchema
+        {
+            Reference = def.Value
+        });
     }
 
     public Dictionary<string, string> GenerateAvroSchemas(Type baseType)
