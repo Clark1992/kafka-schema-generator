@@ -1,7 +1,7 @@
 [
   {
     "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
-    "typeName": "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+    "typeName": "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
     "format": "json",
     "currentLatestSchemaPath": "downloaded_json",
     "outputPath": "json_evolved_schema",

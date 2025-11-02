@@ -17,22 +17,22 @@ public class SchemaGeneratorTests
 
     [Theory]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.ISampleEvent",
+        "KafkaSchemaGenerator.Tests.Json.ISampleEvent",
         null,
-        "KafkaSchemaGenerator.Tests.ISampleEvent-value.json",
+        "KafkaSchemaGenerator.Tests.Json.ISampleEvent-value.json",
         "expectedJSON-value.json")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleEventKey",
+        "KafkaSchemaGenerator.Tests.Json.SampleEventKey",
         null,
-        "KafkaSchemaGenerator.Tests.SampleEventKey-key.json",
+        "KafkaSchemaGenerator.Tests.Json.SampleEventKey-key.json",
         "expectedJSON-key.json")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.ISampleEvent",
+        "KafkaSchemaGenerator.Tests.Json.ISampleEvent",
         "someTopic",
         "someTopic-value.json",
         "expectedJSON-value.json")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleEventKey",
+        "KafkaSchemaGenerator.Tests.Json.SampleEventKey",
         "someTopic",
         "someTopic-key.json",
         "expectedJSON-key.json")]
@@ -54,7 +54,7 @@ public class SchemaGeneratorTests
         Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expected)));
     }
 
-    [Theory]
+    [Theory(Skip = "Avromulti not supported currently")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.ISampleEvent",
         null,
@@ -102,22 +102,22 @@ public class SchemaGeneratorTests
 
     [Theory]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleCreatedEvent",
+        "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent",
         null,
-        "KafkaSchemaGenerator.Tests.SampleCreatedEvent-value.avsc",
+        "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent-value.avsc",
         "expectedAVRO-value.avsc")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleEventKey",
+        "KafkaSchemaGenerator.Tests.Avro.SampleEventKey",
         null,
-        "KafkaSchemaGenerator.Tests.SampleEventKey-key.avsc",
+        "KafkaSchemaGenerator.Tests.Avro.SampleEventKey-key.avsc",
         "expectedAVRO-key.avsc")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleCreatedEvent",
+        "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent",
         "someTopic",
         "someTopic-value.avsc",
         "expectedAVRO-value.avsc")]
     [InlineData(
-        "KafkaSchemaGenerator.Tests.SampleEventKey",
+        "KafkaSchemaGenerator.Tests.Avro.SampleEventKey",
         "someTopic",
         "someTopic-key.avsc",
         "expectedAVRO-key.avsc")]

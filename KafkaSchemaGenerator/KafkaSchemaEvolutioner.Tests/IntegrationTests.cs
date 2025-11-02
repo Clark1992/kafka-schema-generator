@@ -17,22 +17,22 @@ public class SchemaEvolutionerTests
 
     [Theory]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+        "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
         null,
-        "KafkaSchemaEvolutioner.Tests.ISampleEvent-value.json",
+        "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent-value.json",
         "expectedJSON-value.json")]
     [InlineData(
-       "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+       "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey",
        null,
-       "KafkaSchemaEvolutioner.Tests.SampleEventKey-key.json",
+       "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey-key.json",
        "expectedJSON-key.json")]
     [InlineData(
-       "KafkaSchemaEvolutioner.Tests.ISampleEvent",
+       "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
        "someTopic",
        "someTopic-value.json",
        "expectedJSON-value.json")]
     [InlineData(
-       "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+       "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey",
        "someTopic",
        "someTopic-key.json",
        "expectedJSON-key.json")]
@@ -65,7 +65,7 @@ public class SchemaEvolutionerTests
         Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expected)));
     }
 
-    [Theory]
+    [Theory(Skip = "Avromulti not supported currently")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.ISampleEvent",
         null,
@@ -123,22 +123,22 @@ public class SchemaEvolutionerTests
 
     [Theory]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleCreatedEvent",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent",
         null,
-        "KafkaSchemaEvolutioner.Tests.SampleCreatedEvent-value.avsc",
-        "expectedAVROMULTI.avsc")]
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent-value.avsc",
+        "expectedAVRO-value.avsc")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey",
         null,
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey-key.avsc",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey-key.avsc",
         "expectedAVRO-key.avsc")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleCreatedEvent",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent",
         "someTopic",
         "someTopic-value.avsc",
-        "expectedAVROMULTI.avsc")]
+        "expectedAVRO-value.avsc")]
     [InlineData(
-        "KafkaSchemaEvolutioner.Tests.SampleEventKey",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey",
         "someTopic",
         "someTopic-key.avsc",
         "expectedAVRO-key.avsc")]
@@ -166,18 +166,12 @@ public class SchemaEvolutionerTests
         Assert.True(result);
 
         var expected = File.ReadAllText(expectedAvroFile);
-        var expectedSchemas = JArray.Parse(expected);
-
-        var actualSchemas = Utils.LoadFilesFromDirectory(outputFolder);
 
         var actual = File.ReadAllText($"{outputFolder}/{actualAvroFile}");
 
         var actualJson = JObject.Parse(actual);
-        string targetName = actualJson.Value<string>("name");
 
-        var expectedJson = expectedSchemas
-                .OfType<JObject>()
-                .FirstOrDefault(o => o["name"]?.Value<string>() == targetName);
+        var expectedJson = JObject.Parse(expected);
 
         Assert.NotNull(actual);
         Assert.True(JToken.DeepEquals(actualJson, expectedJson));

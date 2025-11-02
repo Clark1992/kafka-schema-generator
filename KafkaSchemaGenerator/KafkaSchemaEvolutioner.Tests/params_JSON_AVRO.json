@@ -1,0 +1,17 @@
+[
+  {
+    "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
+    "typeName": "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
+    "format": "json",
+    "currentLatestSchemaPath": "downloaded_json",
+    "outputPath": "json_evolved_schema",
+    "topic": "someTopic"
+  },
+  {
+    "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
+    "typeName": "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent",
+    "format": "avro",
+    "currentLatestSchemaPath": "downloaded_avro",
+    "outputPath": "avro_evolved_schema"
+  }
+]

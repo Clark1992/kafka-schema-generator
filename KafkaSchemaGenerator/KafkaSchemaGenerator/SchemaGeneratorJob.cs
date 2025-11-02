@@ -76,11 +76,11 @@ public static class SchemaGeneratorJob
                 break;
 
             case "avromulti":
-                GenerateAvroMulti(schemaGenerator, type, outputFolder, subjectNameStrategy, topic);
+                Console.WriteLine("'avromulti' - not supported right now as it is hard to make deserializer to deserialize polymorphic type configed on interface, i.e. make Deserializer<TAbstraction>.Deserialize(byte[]) to return TImplementation as TAbstraction like in Json schema");
                 break;
 
             default:
-                Console.WriteLine("Unknown format, use 'json' or 'avro' or 'avromulti'");
+                Console.WriteLine("Unknown format, use 'json' or 'avro'");
                 return false;
         }
 
@@ -98,23 +98,6 @@ public static class SchemaGeneratorJob
         var fileName = FileNameBuilder.BuildFileName(strategy, type, topic);
         FileWriter writer = new($"{Path.Combine(outputFolder, fileName)}.{GetExt(format)}");
         writer.WriteSchema(schemaJson);
-    }
-
-    private static void GenerateAvroMulti(
-        SchemaGenerator schemaGenerator,
-        Type type,
-        string outputFolder,
-        SubjectNameStrategy strategy,
-        string topic)
-    {
-        var schemaJsons = schemaGenerator.GenerateAvroSchemas(type);
-
-        foreach (var schemaJson in schemaJsons)
-        {
-            var fileName = FileNameBuilder.BuildAvroMultiFileName(strategy, schemaJson.Key, topic);
-            var writer = new FileWriter($"{Path.Combine(outputFolder, fileName)}.{GetExt(Format.AVRO)}");
-            writer.WriteSchema(schemaJson.Value);
-        }
     }
 
     private static string GetExt(Format format) => format switch

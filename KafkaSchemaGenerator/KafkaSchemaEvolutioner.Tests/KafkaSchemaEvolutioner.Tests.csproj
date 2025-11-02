@@ -25,10 +25,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent-value.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="downloaded_avro\someTopic-key.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleEventKey-key.avsc">
+	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey-key.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="downloaded_avro\someTopic-value.avsc">
@@ -82,7 +85,7 @@
 	  <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.SampleEventKey-key.json">
+	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.Json.SampleEventKey-key.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="downloaded_json\someTopic-key.json">
@@ -91,10 +94,13 @@
 	  <None Update="downloaded_json\someTopic-value.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.ISampleEvent-value.json">
+	  <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.Json.ISampleEvent-value.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="expectedAVRO-key.avsc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="expectedAVRO-value.avsc">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="expectedAVROMULTI.avsc">
@@ -106,7 +112,10 @@
 	  <None Update="expectedJSON-value.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="params.json">
+	  <None Update="params_JSON_AVRO.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="params_JSON_AVROMULTI.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

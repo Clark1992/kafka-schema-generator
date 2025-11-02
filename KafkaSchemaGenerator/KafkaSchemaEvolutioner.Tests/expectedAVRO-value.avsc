@@ -1,4 +1,4 @@
-{
+﻿{
   "namespace": "KafkaSchemaEvolutioner.Tests.Avro",
   "name": "SampleRebuiltEvent",
   "type": "record",
@@ -41,8 +41,12 @@
             "type": "string"
           },
           {
-            "name": "Country",
-            "type": "string"
+            "name": "NewCountry",
+            "type": [
+              "null",
+              "string"
+            ],
+            "default": null
           }
         ]
       }
@@ -68,19 +72,27 @@
               "type": "string"
             },
             {
-              "name": "Url",
-              "type": "string"
+              "name": "NewUrl",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
             }
           ]
         }
       }
     },
     {
-      "name": "OccurredAt",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      }
+      "name": "NewOccurredAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
     }
   ]
 }
