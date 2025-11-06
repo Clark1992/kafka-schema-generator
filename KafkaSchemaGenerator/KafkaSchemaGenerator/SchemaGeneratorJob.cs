@@ -1,20 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using KafkaSchemaGenerator.Generators;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace KafkaSchemaGenerator;
-
-public enum Format
-{
-    JSON,
-    AVRO,
-}
-
-public enum SubjectNameStrategy
-{
-    Topic,
-    Record
-}
 
 public static class Validator
 {
@@ -29,9 +17,9 @@ public static class Validator
     } 
 }
 
-public static class SchemaGeneratorJob
+public class SchemaGeneratorJob(ISchemaGeneratorFactory factory, ILogger<SchemaGeneratorJob> logger)
 {
-    public static bool Execute(string assemblyPath, string typeName, string format, string outputFolder = null, string topic = null)
+    public bool Execute(string assemblyPath, string typeName, string format, string outputFolder = null, string topic = null)
     {
         Validator.Validate(assemblyPath, typeName, format, outputFolder, topic);
 
@@ -44,11 +32,11 @@ public static class SchemaGeneratorJob
             topic = topic.Trim();
         }
 
-        outputFolder = outputFolder ?? "output";
+        outputFolder ??= "output";
 
         if (!File.Exists(assemblyPath))
         {
-            Console.WriteLine($"Assembly not found: {assemblyPath}");
+            logger.LogError("Assembly not found: {assemblyPath}", assemblyPath);
             return false;
         }
 
@@ -56,34 +44,36 @@ public static class SchemaGeneratorJob
         Type type = asm.GetType(typeName);
         if (type == null)
         {
-            Console.WriteLine($"Type not found: {typeName}");
+            logger.LogError("Type not found: {typeName}", typeName);
             return false;
         }
 
         string schemaJson;
 
-        var schemaGenerator = new SchemaGenerator();
-        switch (format)
+        if (format.Equals("avromulti", StringComparison.OrdinalIgnoreCase))
         {
-            case "json":
-                schemaJson = schemaGenerator.GenerateJsonSchema(type);
-                SaveTofile(outputFolder, type, schemaJson, Format.JSON, subjectNameStrategy, topic);
-                break;
-
-            case "avro":
-                schemaJson = schemaGenerator.GenerateAvroSchema(type);
-                SaveTofile(outputFolder, type, schemaJson, Format.AVRO, subjectNameStrategy, topic);
-                break;
-
-            case "avromulti":
-                Console.WriteLine("'avromulti' - not supported right now as it is hard to make deserializer to deserialize polymorphic type configed on interface, i.e. make Deserializer<TAbstraction>.Deserialize(byte[]) to return TImplementation as TAbstraction like in Json schema");
-                break;
-
-            default:
-                Console.WriteLine("Unknown format, use 'json' or 'avro'");
-                return false;
+            logger.LogError("'avromulti' - not supported right now as it is hard to make deserializer to deserialize polymorphic type configed on interface, i.e. make Deserializer<TAbstraction>.Deserialize(byte[]) to return TImplementation as TAbstraction like in Json schema");
+            return false;
         }
 
+        var formatEnum = format switch
+        {
+            "json" => Format.JSON,
+            "avro" => Format.AVRO,
+            "proto" => Format.PROTO,
+            _ => Format.UNKNOWN,
+        };
+
+        if (formatEnum is Format.UNKNOWN)
+        {
+            logger.LogError("Unknown format, use json/avro/proto");
+            return false;
+        }
+
+        var schemaGenerator = factory.GetGenerator(formatEnum);
+
+        schemaJson = schemaGenerator.GenerateSchema(type);
+        SaveTofile(outputFolder, type, schemaJson, formatEnum, subjectNameStrategy, topic);
         return true;
     }
 
@@ -104,6 +94,7 @@ public static class SchemaGeneratorJob
     {
         Format.JSON => "json",
         Format.AVRO => "avsc",
+        Format.PROTO => "proto",
         _ => throw new InvalidOperationException("Wrong format")
     };
 }

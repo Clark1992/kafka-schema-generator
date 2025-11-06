@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using KafkaSchemaGenerator;
+using Newtonsoft.Json.Linq;
 
 namespace KafkaSchemaEvolutioner.SchemaMergers;
 
-public static class JsonSchemaMerger
+public class JsonSchemaMerger: ISchemaMerger
 {
+    public bool AppliesTo(Format format) => format == Format.JSON;
+
     /// <summary>
     /// Merge new JSON Schema against old one with BACKWARD-like rules,
     /// recursively applying to definitions.
@@ -11,10 +14,13 @@ public static class JsonSchemaMerger
     /// - New properties become optional with default=null if needed.
     /// - Existing properties are checked for tightening constraints (maxLength, enum).
     /// </summary>
-    public static JObject MergeSchemas(JObject oldSchema, JObject newSchema)
+    public string MergeSchemas(string oldSchemaText, string newSchemaText)
     {
-        ArgumentNullException.ThrowIfNull(oldSchema);
-        ArgumentNullException.ThrowIfNull(newSchema);
+        ArgumentException.ThrowIfNullOrWhiteSpace(oldSchemaText);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newSchemaText);
+
+        JObject oldSchema = JObject.Parse(oldSchemaText);
+        JObject newSchema = JObject.Parse(newSchemaText);
 
         // Merge properties at top level
         MergePropertiesSchema(oldSchema, newSchema);
@@ -43,7 +49,7 @@ public static class JsonSchemaMerger
             }
         }
 
-        return newSchema;
+        return newSchema.ToString();
     }
 
     private static void MergePropertiesSchema(JObject oldPropsContainer, JObject newPropsContainer)

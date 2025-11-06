@@ -1,6 +1,6 @@
 ﻿namespace KafkaSchemaGenerator.Tests.Common;
 
-public class Utils
+public class TestUtils
 {
     public static Dictionary<string, string> LoadFilesFromDirectory(string directoryPath)
     {

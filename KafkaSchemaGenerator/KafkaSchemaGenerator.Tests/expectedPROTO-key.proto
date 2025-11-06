@@ -1,0 +1,7 @@
+﻿syntax = "proto3";
+package KafkaSchemaGenerator.Tests.Proto.Generated;
+import "protobuf-net/bcl.proto"; // schema for protobuf-net's handling of core .NET types
+
+message SampleEventKey {
+   .bcl.Guid SampleId = 1; // default value could not be applied: 00000000-0000-0000-0000-000000000000
+}

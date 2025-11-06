@@ -20,7 +20,6 @@ public class SampleRebuiltEvent
     public SampleAddress Address { get; set; }
     [Required]
     public List<SampleAttachment> Attachments { get; set; }
-
     [Required]
     public DateTime OccurredAt { get; set; }
 }

@@ -1,4 +1,9 @@
+using KafkaSchemaEvolutioner.SchemaMergers;
+using KafkaSchemaGenerator;
+using KafkaSchemaGenerator.Generators;
 using KafkaSchemaGenerator.Tests.Common;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 
@@ -7,8 +12,25 @@ namespace KafkaSchemaEvolutioner.Tests.IntegrationTests;
 [Collection(nameof(SchemaEvolutionerTests))]
 public class SchemaEvolutionerTests
 {
+    private readonly SchemaEvolutionJob _sut;
+
     public SchemaEvolutionerTests()
     {
+        _sut = new SchemaEvolutionJob(
+            new SchemaGeneratorJob(
+                new SchemaGeneratorFactory([
+                new JsonSchemaGenerator(),
+                new KafkaSchemaGenerator.Generators.AvroSchemaGenerator(),
+                new ProtoSchemaGenerator()]),
+                new Mock<ILogger<SchemaGeneratorJob>>().Object),
+            new SchemaMergerFactory(
+            [
+                new JsonSchemaMerger(),
+                new AvroSchemaMerger(),
+                new ProtoSchemaMerger(new Mock<ILogger<ProtoSchemaMerger>>().Object)
+            ]),
+            new Mock<ILogger<SchemaEvolutionJob>>().Object);
+
         List<string> dirs = ["avro_evolved_schema", "avromulti_evolved_schema", "json_evolved_schema", "generated"];
 
         foreach (var dir in dirs)
@@ -37,7 +59,7 @@ public class SchemaEvolutionerTests
        "someTopic-key.json",
        "expectedJSON-key.json")]
 
-    public void GenerateJsonSchema_ShouldGenerateSchema(
+    public void GenerateJsonSchema_ShouldGenerateEvolvedSchema(
         string type,
         string topic,
         string actualJsonFile,
@@ -49,7 +71,7 @@ public class SchemaEvolutionerTests
 
         // Act
         string pathToAssembly = Assembly.GetExecutingAssembly().Location;
-        var result = SchemaEvolutionJob.Execute(
+        var result = _sut.Execute(
             pathToAssembly,
             type,
             format,
@@ -76,7 +98,7 @@ public class SchemaEvolutionerTests
         "someTopic",
         "someTopic-",
         "-value")]
-    public void GenerateAvroSchemas_ShouldGenerateMultipleSchemas(
+    public void GenerateAvroSchemas_ShouldGenerateMultipleEvolvedSchemas(
         string type,
         string topic,
         string prefix,
@@ -88,7 +110,7 @@ public class SchemaEvolutionerTests
 
         // Act
         string pathToAssembly = Assembly.GetExecutingAssembly().Location;
-        var result = SchemaEvolutionJob.Execute(
+        var result = _sut.Execute(
             pathToAssembly,
             type,
             format,
@@ -100,7 +122,7 @@ public class SchemaEvolutionerTests
         var expected = File.ReadAllText("expectedAVROMULTI.avsc");
         var expectedSchemas = JArray.Parse(expected);
 
-        var actualSchemas = Utils.LoadFilesFromDirectory(outputFolder);
+        var actualSchemas = TestUtils.LoadFilesFromDirectory(outputFolder);
 
         Assert.NotNull(actualSchemas);
         Assert.Equal(actualSchemas.Count, expectedSchemas.Count);
@@ -117,7 +139,7 @@ public class SchemaEvolutionerTests
 
             Assert.True(JToken.DeepEquals(actualJson, expectedJson));
 
-            Utils.AssertFileName(actual.Key, targetName, prefix, suffix, "avsc");
+            TestUtils.AssertFileName(actual.Key, targetName, prefix, suffix, "avsc");
         }
     }
 
@@ -142,7 +164,7 @@ public class SchemaEvolutionerTests
         "someTopic",
         "someTopic-key.avsc",
         "expectedAVRO-key.avsc")]
-    public void GenerateAvroSchema_ShouldGenerateSchema(
+    public void GenerateAvroSchema_ShouldGenerateEvolvedSchema(
         string type,
         string topic,
         string actualAvroFile,
@@ -154,7 +176,7 @@ public class SchemaEvolutionerTests
 
         // Act
         string pathToAssembly = Assembly.GetExecutingAssembly().Location;
-        var result = SchemaEvolutionJob.Execute(
+        var result = _sut.Execute(
             pathToAssembly,
             type,
             format,
@@ -175,5 +197,57 @@ public class SchemaEvolutionerTests
 
         Assert.NotNull(actual);
         Assert.True(JToken.DeepEquals(actualJson, expectedJson));
+    }
+
+    [Theory]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",
+        null,
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent-value.proto",
+        "expectedPROTO-value.proto")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey",
+        null,
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey-key.proto",
+        "expectedPROTO-key.proto")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",
+        "someTopic",
+        "someTopic-value.proto",
+        "expectedPROTO-value.proto")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey",
+        "someTopic",
+        "someTopic-key.proto",
+        "expectedPROTO-key.proto")]
+    public void GenerateProtoSchema_ShouldGenerateEvolvedSchema(
+        string type,
+        string topic,
+        string actualProtoFile,
+        string expectedProtoFile)
+    {
+        // Arrange
+        var format = "proto";
+        var outputFolder = $"{format}_evolved_schema";
+
+        // Act
+        string pathToAssembly = Assembly.GetExecutingAssembly().Location;
+        var result = _sut.Execute(
+            pathToAssembly,
+            type,
+            format,
+            $"downloaded_{format}",
+            outputFolder,
+            topic);
+
+        // Assert
+        Assert.True(result);
+
+        var expected = File.ReadAllText(expectedProtoFile);
+
+        var actual = File.ReadAllText($"{outputFolder}/{actualProtoFile}");
+
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
     }
 }

@@ -13,5 +13,13 @@
     "format": "avro",
     "currentLatestSchemaPath": "downloaded_avro",
     "outputPath": "avro_evolved_schema"
+  },
+
+  {
+    "assemblyPath": "KafkaSchemaEvolutioner.Tests.dll",
+    "typeName": "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",
+    "format": "proto",
+    "currentLatestSchemaPath": "downloaded_proto",
+    "outputPath": "proto_evolved_schema"
   }
 ]

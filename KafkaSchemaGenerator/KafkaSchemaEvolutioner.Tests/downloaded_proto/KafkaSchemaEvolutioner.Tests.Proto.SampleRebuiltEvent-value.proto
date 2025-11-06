@@ -1,0 +1,27 @@
+syntax = "proto3";
+package KafkaSchemaEvolutioner.Tests.Proto.Generated;
+import "protobuf-net/bcl.proto"; // schema for protobuf-net's handling of core .NET types
+
+message SampleAddress {
+    .bcl.Guid Id = 1; // default value could not be applied: 00000000-0000-0000-0000-000000000000
+    string Street = 2;
+    string City = 3;
+    string Country = 4;
+    optional .bcl.Guid OptionalId = 5;
+}
+message SampleAttachment {
+    .bcl.Guid Id = 1; // default value could not be applied: 00000000-0000-0000-0000-000000000000
+    string FileName = 2;
+    string Url = 3;
+    optional .bcl.Guid OptionalId = 4;
+}
+message SampleRebuiltEvent {
+    .bcl.Guid SampleId = 1; // default value could not be applied: 00000000-0000-0000-0000-000000000000
+    string Name = 2;
+    string Description = 3;
+    SampleAddress Address = 4;
+    repeated SampleAttachment Attachments = 5;
+    .bcl.DateTime OccurredAt = 6;
+    optional .bcl.DateTime OptionalOccurredAt = 7;
+    optional SampleAddress OptionalAddress2 = 8;
+}

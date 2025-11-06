@@ -1,13 +1,13 @@
 ﻿using KafkaSchemaEvolutioner.SchemaMergers;
 using KafkaSchemaGenerator;
-using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace KafkaSchemaEvolutioner;
 
-public class SchemaEvolutionJob
+public class SchemaEvolutionJob(SchemaGeneratorJob generatorJob, ISchemaMergerFactory factory, ILogger<SchemaEvolutionJob> logger)
 {
-    public static bool Execute(
+    public bool Execute(
             string assemblyPath,
             string typeName,
             string format,
@@ -21,12 +21,12 @@ public class SchemaEvolutionJob
 
         Validate(currentLatestSchemaPath);
 
-        bool generated = SchemaGeneratorJob.Execute(assemblyPath, typeName, format, generatedTmp, topic);
+        bool generated = generatorJob.Execute(assemblyPath, typeName, format, generatedTmp, topic);
         if (!generated)
             throw new InvalidOperationException("Schema generation failed");
 
         var newSchemaFiles = Directory.GetFiles(generatedTmp, "*.*")
-                                          .Where(f => f.EndsWith(".json") || f.EndsWith(".avsc"))
+                                          .Where(f => f.EndsWith(".json") || f.EndsWith(".avsc") || f.EndsWith(".proto"))
                                           .ToArray();
 
         if (newSchemaFiles.Length == 0)
@@ -41,22 +41,22 @@ public class SchemaEvolutionJob
 
             if (!File.Exists(oldSchemaPath))
             {
-                Console.WriteLine($"⚠️ Old schema (from registry) {fileName} now found. Considering this is new schema.");
+                logger.LogInformation("⚠️ Old schema (from registry) {fileName} now found. Considering this is new schema.", fileName);
                 SaveOutput(newSchemaText, fileName, outputFolder);
                 continue;
             }
 
-            var oldJson = JObject.Parse(File.ReadAllText(oldSchemaPath, Encoding.UTF8));
-            var newJson = JObject.Parse(newSchemaText);
+            var oldSchemaText = File.ReadAllText(oldSchemaPath, Encoding.UTF8);
 
             var formatType = format switch
             {
                 "json" => Format.JSON,
                 "avro" or "avromulti" => Format.AVRO,
+                "proto" => Format.PROTO,
                 _ => throw new InvalidOperationException("Wrong format param.")
             };
 
-            var merged = SchemaMerger.MergeSchemas(oldJson, newJson, formatType);
+            var merged = factory.GetMerger(formatType).MergeSchemas(oldSchemaText, newSchemaText);
 
             SaveOutput(merged.ToString(), fileName, outputFolder);
         }

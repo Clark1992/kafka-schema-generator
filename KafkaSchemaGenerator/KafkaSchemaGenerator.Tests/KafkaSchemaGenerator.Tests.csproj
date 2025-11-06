@@ -12,10 +12,12 @@
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KafkaSchemaGenerator.Tests.Common\KafkaSchemaGenerator.Tests.Common.csproj" />
     <ProjectReference Include="..\KafkaSchemaGenerator\KafkaSchemaGenerator.csproj" />
   </ItemGroup>
 
@@ -24,6 +26,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="old.proto">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="expectedPROTO-key.proto">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="expectedPROTO-value.proto">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="expectedAVRO-value.avsc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

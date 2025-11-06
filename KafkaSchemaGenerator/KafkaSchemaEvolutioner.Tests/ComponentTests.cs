@@ -9,7 +9,7 @@ public class SchemaEvolutionerTests
 {
     public SchemaEvolutionerTests()
     {
-        List<string> dirs = ["avro_evolved_schema", "avromulti_evolved_schema", "json_evolved_schema", "generated"];
+        List<string> dirs = ["avro_evolved_schema", "avromulti_evolved_schema", "json_evolved_schema", "generated", "proto_evolved_schema"];
 
         foreach (var dir in dirs)
             if (Directory.Exists(dir)) Directory.Delete(dir, true);
@@ -19,13 +19,6 @@ public class SchemaEvolutionerTests
 
     public async Task RunApp_WithParamFile_JSON_AVROMULTI_ShouldIterateAndGenerateSchemas()
     {
-        // Arrange
-        var jsonOutput = "json_evolved_schema";
-        if (Directory.Exists(jsonOutput)) Directory.Delete(jsonOutput, true);
-
-        var avroOutput = "avromulti_evolved_schema";
-        if (Directory.Exists(avroOutput)) Directory.Delete(avroOutput, true);
-
         // Act
         var process = Process.Start(new ProcessStartInfo
         {
@@ -66,7 +59,7 @@ public class SchemaEvolutionerTests
         var expected = File.ReadAllText("expectedAVROMULTI.avsc");
         var expectedSchemas = JArray.Parse(expected);
 
-        var actualSchemas = Utils.LoadFilesFromDirectory("avromulti_evolved_schema");
+        var actualSchemas = TestUtils.LoadFilesFromDirectory("avromulti_evolved_schema");
 
         Assert.NotNull(actualSchemas);
         Assert.Equal(actualSchemas.Count, expectedSchemas.Count);
@@ -87,20 +80,13 @@ public class SchemaEvolutionerTests
 
     
     [Fact]
-    public async Task RunApp_WithParamFile_JSON_AVRO_ShouldIterateAndGenerateSchemas()
+    public async Task RunApp_WithParamFile_JSON_AVRO_PROTO_ShouldIterateAndGenerateSchemas()
     {
-        // Arrange
-        var jsonOutput = "json_evolved_schema";
-        if (Directory.Exists(jsonOutput)) Directory.Delete(jsonOutput, true);
-
-        var avroOutput = "avro_evolved_schema";
-        if (Directory.Exists(avroOutput)) Directory.Delete(avroOutput, true);
-
         // Act
         var process = Process.Start(new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "KafkaSchemaEvolutioner.dll params_JSON_AVRO.json",
+            Arguments = "KafkaSchemaEvolutioner.dll params_JSON_AVRO_PROTO.json",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -138,5 +124,11 @@ public class SchemaEvolutionerTests
         var actualAVRO = File.ReadAllText($"avro_evolved_schema/KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent-value.avsc");
         Assert.NotNull(actualAVRO);
         Assert.True(JToken.DeepEquals(JObject.Parse(actualAVRO), JObject.Parse(expectedAVRO)));
+
+        // proto
+        var expectedPROTO = File.ReadAllText("expectedPROTO-value.proto");
+        var actualPROTO = File.ReadAllText($"proto_evolved_schema/KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent-value.proto");
+        Assert.NotNull(actualPROTO);
+        Assert.Equal(actualPROTO, expectedPROTO,ignoreLineEndingDifferences: true);
     }
 }

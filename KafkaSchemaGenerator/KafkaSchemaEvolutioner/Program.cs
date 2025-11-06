@@ -1,79 +1,81 @@
 ﻿using KafkaSchemaEvolutioner;
+using KafkaSchemaEvolutioner.SchemaMergers;
+using KafkaSchemaGenerator;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-class JobArgs
+const int numArgs = 5;
+
+if (args.Length < numArgs && args.Length != 1)
 {
-    public string AssemblyPath { get; set; }
-    public string TypeName { get; set; }
-    public string CurrentLatestSchemaPath { get; set; }
-    public string Format { get; set; }
-    public string OutputPath {  get; set;  }
-    public string Topic {  get; set;  }
+    Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> <CurrentLatestSchemaPath> <OutputPath> [Topic]");
+    Console.WriteLine("Usage: dotnet run -- params.json");
+    return 1;
 }
 
-class Program
+using IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(CommonSetup.ConfigureAppConfig(args))
+    .ConfigureServices((c, s) => CommonSetup.AddGenerators(c, s)
+        .AddSingleton<ISchemaMerger, JsonSchemaMerger>()
+        .AddSingleton<ISchemaMerger, AvroSchemaMerger>()
+        .AddSingleton<ISchemaMerger, ProtoSchemaMerger>()
+        .AddSingleton<ISchemaMergerFactory, SchemaMergerFactory>()
+        .AddSingleton<SchemaEvolutionJob>())
+    .ConfigureLogging((c, l) => CommonSetup.ConfigureLogging(c, l))
+    .Build();
+
+var runner = host.Services.GetRequiredService<SchemaEvolutionJob>();
+var logger = host.Services.GetRequiredService<ILogger<Program>>();
+
+if (args.Length == 1)
 {
-    const int numArgs = 5;
-    private static readonly JsonSerializerOptions options = new()
+    return ProcessForParamsFileArg(runner, logger, args);
+}
+else
+{
+    return ProcessForCommandArgs(runner, args);
+}
+
+static int ProcessForParamsFileArg(SchemaEvolutionJob runner, ILogger<Program> logger, string[] args)
+{
+    string paramsFilePath = args[0];
+    var paramsText = File.Exists(paramsFilePath) ? File.ReadAllText(paramsFilePath) : throw new InvalidOperationException("Couldn't find params file.");
+
+    var paramObjects = JsonSerializer.Deserialize<List<JobArgs>>(paramsText, new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = true
-    };
+    });
 
-    static int Main(string[] args)
+    foreach (var paramObject in paramObjects)
     {
-        if (args.Length < numArgs && args.Length != 1)
+        var success = runner.Execute(
+            paramObject.AssemblyPath,
+            paramObject.TypeName,
+            paramObject.Format,
+            paramObject.CurrentLatestSchemaPath,
+            paramObject.OutputPath,
+            paramObject.Topic);
+
+        if (!success)
         {
-            Console.WriteLine("Usage: dotnet run -- <AssemblyPath> <TypeName> <Format: json|avro|avromulti> <CurrentLatestSchemaPath> <OutputPath> [Topic]");
-            Console.WriteLine("Usage: dotnet run -- params.json");
+            logger.LogError("SchemaEvolutionJob.Execute returns failure. Stopping...");
             return 1;
         }
-
-        if (args.Length == 1)
-        {
-            return ProcessForParamsFileArg(args);
-        }
-        else
-        {
-            return ProcessForCommandArgs(args);
-        }
     }
 
-    private static int ProcessForParamsFileArg(string[] args)
-    {
-        string paramsFilePath = args[0];
-        var paramsText = File.Exists(paramsFilePath) ? File.ReadAllText(paramsFilePath) : throw new InvalidOperationException("Couldn't find params file.");
+    return 0;
+}
 
-        var paramObjects = JsonSerializer.Deserialize<List<JobArgs>>(paramsText, options);
+static int ProcessForCommandArgs(SchemaEvolutionJob runner, string[] args)
+{
+    string assemblyPath = args[0];
+    string typeName = args[1];
+    string format = args[2].ToLower();
+    string currentLatestSchemaPath = args[3];
+    string outputPath = args[4];
+    string topic = args.Length > numArgs ? args[5] : null;
 
-        foreach (var paramObject in paramObjects)
-        {
-            var success = SchemaEvolutionJob.Execute(
-                paramObject.AssemblyPath,
-                paramObject.TypeName,
-                paramObject.Format,
-                paramObject.CurrentLatestSchemaPath,
-                paramObject.OutputPath,
-                paramObject.Topic);
-
-            if (!success)
-            {
-                Console.WriteLine("SchemaEvolutionJob.Execute returns failure. Stopping...");
-                return 1;
-            }
-        }
-
-        return 0;
-    }
-
-    private static int ProcessForCommandArgs(string[] args)
-    {
-        string assemblyPath = args[0];
-        string typeName = args[1];
-        string format = args[2].ToLower();
-        string currentLatestSchemaPath = args[3];
-        string outputPath = args[4];
-        string topic = args.Length > numArgs ? args[5] : null;
-
-        return SchemaEvolutionJob.Execute(assemblyPath, typeName, format, currentLatestSchemaPath, outputPath, topic) ? 0 : 1;
-    }
+    return runner.Execute(assemblyPath, typeName, format, currentLatestSchemaPath, outputPath, topic) ? 0 : 1;
 }

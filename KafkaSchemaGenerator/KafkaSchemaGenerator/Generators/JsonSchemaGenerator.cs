@@ -1,23 +1,14 @@
-﻿using AvroSchemaGenerator;
-using NJsonSchema;
+﻿using NJsonSchema;
 using NJsonSchema.NewtonsoftJson.Generation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace KafkaSchemaGenerator;
+namespace KafkaSchemaGenerator.Generators;
 
-public interface ISchemaGenerator
+public class JsonSchemaGenerator : ISchemaGenerator
 {
-    string GenerateJsonSchema(Type type);
+    public bool AppliesTo(Format format) => format is Format.JSON;
 
-    string GenerateAvroSchema(Type type);
-}
-
-public class SchemaGenerator : ISchemaGenerator
-{
-    public string GenerateJsonSchema(Type type)
+    public string GenerateSchema(Type type)
     {
         var schema = JsonSchema.FromType(
             type, 
@@ -152,8 +143,4 @@ public class SchemaGenerator : ISchemaGenerator
             Reference = def.Value
         });
     }
-
-    public string GenerateAvroSchema(Type type) => type.GetSchema();
-
-    public Dictionary<string, string> GenerateAvroSchemas(Type baseType) => throw new NotImplementedException();
 }

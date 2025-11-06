@@ -1,15 +1,24 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using KafkaSchemaGenerator;
+using Newtonsoft.Json.Linq;
 
 namespace KafkaSchemaEvolutioner.SchemaMergers;
 
-public static class AvroSchemaMerger
+public class AvroSchemaMerger: ISchemaMerger
 {
-    public static JObject MergeSchemas(JObject oldSchema, JObject newSchema)
+    public bool AppliesTo(Format format) => format == Format.AVRO;
+
+    public string MergeSchemas(string oldSchemaText, string newSchemaText)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(oldSchemaText);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newSchemaText);
+
+        JObject oldSchema = JObject.Parse(oldSchemaText);
+        JObject newSchema = JObject.Parse(newSchemaText);
+
         if (!IsRecord(oldSchema) || !IsRecord(newSchema))
             throw new InvalidOperationException("Expecting record types");
 
-        return (JObject)MergeTypes(oldSchema, newSchema);
+        return MergeTypes(oldSchema, newSchema).ToString();
     }
 
     private static JToken MergeTypes(JToken oldSchema, JToken newSchema)
