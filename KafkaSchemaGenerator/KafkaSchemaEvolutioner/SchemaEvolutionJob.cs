@@ -41,7 +41,7 @@ public class SchemaEvolutionJob(SchemaGeneratorJob generatorJob, ISchemaMergerFa
 
             if (!File.Exists(oldSchemaPath))
             {
-                logger.LogInformation("⚠️ Old schema (from registry) {fileName} not found. Considering this is new schema.", fileName);
+                logger.LogInformation("⚠️ Old schema {fileName} not found. Considering this is new schema.", fileName);
                 SaveOutput(newSchemaText, fileName, outputFolder);
                 continue;
             }
