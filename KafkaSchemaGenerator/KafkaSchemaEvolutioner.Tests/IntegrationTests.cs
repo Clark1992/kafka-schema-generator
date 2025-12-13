@@ -41,12 +41,12 @@ public class SchemaEvolutionerTests
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
         null,
-        "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent-value.json",
+        "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent.json",
         "expectedJSON-value.json")]
     [InlineData(
        "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey",
        null,
-       "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey-key.json",
+       "KafkaSchemaEvolutioner.Tests.Json.SampleEventKey.json",
        "expectedJSON-key.json")]
     [InlineData(
        "KafkaSchemaEvolutioner.Tests.Json.ISampleEvent",
@@ -147,12 +147,12 @@ public class SchemaEvolutionerTests
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent",
         null,
-        "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent-value.avsc",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent.avsc",
         "expectedAVRO-value.avsc")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey",
         null,
-        "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey-key.avsc",
+        "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey.avsc",
         "expectedAVRO-key.avsc")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent",
@@ -203,12 +203,12 @@ public class SchemaEvolutionerTests
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",
         null,
-        "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent-value.proto",
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent.proto",
         "expectedPROTO-value.proto")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey",
         null,
-        "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey-key.proto",
+        "KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey.proto",
         "expectedPROTO-key.proto")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",

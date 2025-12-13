@@ -30,12 +30,12 @@ public class SchemaGeneratorTests
     [InlineData(
         "KafkaSchemaGenerator.Tests.Json.ISampleEvent",
         null,
-        "KafkaSchemaGenerator.Tests.Json.ISampleEvent-value.json",
+        "KafkaSchemaGenerator.Tests.Json.ISampleEvent.json",
         "expectedJSON-value.json")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Json.SampleEventKey",
         null,
-        "KafkaSchemaGenerator.Tests.Json.SampleEventKey-key.json",
+        "KafkaSchemaGenerator.Tests.Json.SampleEventKey.json",
         "expectedJSON-key.json")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Json.ISampleEvent",
@@ -115,12 +115,12 @@ public class SchemaGeneratorTests
     [InlineData(
         "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent",
         null,
-        "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent-value.avsc",
+        "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent.avsc",
         "expectedAVRO-value.avsc")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Avro.SampleEventKey",
         null,
-        "KafkaSchemaGenerator.Tests.Avro.SampleEventKey-key.avsc",
+        "KafkaSchemaGenerator.Tests.Avro.SampleEventKey.avsc",
         "expectedAVRO-key.avsc")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent",
@@ -154,12 +154,12 @@ public class SchemaGeneratorTests
     [InlineData(
         "KafkaSchemaGenerator.Tests.Proto.SampleRebuiltEvent",
         null,
-        "KafkaSchemaGenerator.Tests.Proto.SampleRebuiltEvent-value.proto",
+        "KafkaSchemaGenerator.Tests.Proto.SampleRebuiltEvent.proto",
         "expectedPROTO-value.proto")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Proto.SampleEventKey",
         null,
-        "KafkaSchemaGenerator.Tests.Proto.SampleEventKey-key.proto",
+        "KafkaSchemaGenerator.Tests.Proto.SampleEventKey.proto",
         "expectedPROTO-key.proto")]
     [InlineData(
         "KafkaSchemaGenerator.Tests.Proto.SampleRebuiltEvent",

@@ -39,7 +39,7 @@ public static class FileNameBuilder
         return strategy switch
         {
             SubjectNameStrategy.Topic => $"{topic}-{suffix}",
-            SubjectNameStrategy.Record => $"{type.FullName}-{suffix}",
+            SubjectNameStrategy.Record => $"{type.FullName}",
             _ => throw new InvalidOperationException("Wrong SubjectNameStrategy")
         };
     }
@@ -50,7 +50,7 @@ public static class FileNameBuilder
         return strategy switch
         {
             SubjectNameStrategy.Topic => $"{topic}-{fullTypeName}-{suffix}",
-            SubjectNameStrategy.Record => $"{fullTypeName}-{suffix}",
+            SubjectNameStrategy.Record => $"{fullTypeName}",
             _ => throw new InvalidOperationException("Wrong SubjectNameStrategy")
         };
     }

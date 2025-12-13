@@ -121,13 +121,13 @@ public class SchemaEvolutionerTests
 
         // avro
         var expectedAVRO = File.ReadAllText("expectedAVRO-value.avsc");
-        var actualAVRO = File.ReadAllText($"avro_evolved_schema/KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent-value.avsc");
+        var actualAVRO = File.ReadAllText($"avro_evolved_schema/KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent.avsc");
         Assert.NotNull(actualAVRO);
         Assert.True(JToken.DeepEquals(JObject.Parse(actualAVRO), JObject.Parse(expectedAVRO)));
 
         // proto
         var expectedPROTO = File.ReadAllText("expectedPROTO-value.proto");
-        var actualPROTO = File.ReadAllText($"proto_evolved_schema/KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent-value.proto");
+        var actualPROTO = File.ReadAllText($"proto_evolved_schema/KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent.proto");
         Assert.NotNull(actualPROTO);
         Assert.Equal(actualPROTO, expectedPROTO,ignoreLineEndingDifferences: true);
     }
