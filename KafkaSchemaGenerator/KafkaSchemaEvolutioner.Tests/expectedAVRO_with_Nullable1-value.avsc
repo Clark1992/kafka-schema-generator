@@ -1,0 +1,22 @@
+﻿{
+  "namespace": "KafkaSchemaEvolutioner.Tests.Nullable",
+  "name": "SampleNullable1",
+  "type": "record",
+  "fields": [
+    {
+      "name": "SampleId",
+      "type": [
+                "null",
+                {
+                  "type": "string",
+                  "logicalType": "uuid"
+                }
+              ],
+      "default": null
+    },
+    {
+      "name": "Name",
+      "type": "string"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-﻿using NJsonSchema;
+﻿using Newtonsoft.Json.Linq;
+using NJsonSchema;
 using NJsonSchema.NewtonsoftJson.Generation;
 using System.Text.Json.Serialization;
 
@@ -16,6 +17,8 @@ public class JsonSchemaGenerator : ISchemaGenerator
             { 
                 FlattenInheritanceHierarchy = true,
             });
+        FixGuids(schema);
+        AddDefaultNullIfNeeded(schema.Properties is not null ? schema.Properties : new Dictionary<string, JsonSchemaProperty>());
 
         var polymorphic = type
             .GetCustomAttributes(false)
@@ -28,6 +31,17 @@ public class JsonSchemaGenerator : ISchemaGenerator
         }
 
         return schema.ToJson();
+    }
+
+    private static void AddDefaultNullIfNeeded(IDictionary<string, JsonSchemaProperty> props)
+    {
+        foreach (var prop in props)
+        {
+            if (prop.Value.IsNullable(SchemaType.JsonSchema))
+            {
+                prop.Value.Default = JValue.CreateNull();
+            }
+        }
     }
 
     private static void ProcessPolymorphic(Type type, JsonSchema schema, JsonPolymorphicAttribute polymorphic)
@@ -56,6 +70,7 @@ public class JsonSchemaGenerator : ISchemaGenerator
             BuildOneOf(schema, def);
             AddConstTypeProp(def, discriminator);
             FixGuids(def.Value);
+            AddDefaultNullIfNeeded(def.Value.Properties is not null ? def.Value.Properties : new Dictionary<string, JsonSchemaProperty>());
         }
 
         CleanRoot(schema);

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SampleNullable2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "Name"
+  ],
+  "properties": {
+    "SampleId": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "uuid",
+      "default": null
+    },
+    "Name": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

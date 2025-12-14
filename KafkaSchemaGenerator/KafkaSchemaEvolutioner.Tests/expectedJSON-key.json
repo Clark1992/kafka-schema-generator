@@ -6,7 +6,7 @@
   "properties": {
     "SampleId": {
       "type": "string",
-      "format": "guid"
+      "format": "uuid"
     }
   }
 }

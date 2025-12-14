@@ -4,14 +4,14 @@ using System.Text.RegularExpressions;
 
 namespace KafkaSchemaGenerator.Common.Utils;
 
-public static class StringExtensions
+public static partial class StringExtensions
 {
     public static string Select(this string input, Func<string, string> selector) => selector(input);
 
     public static string AddOptionals(this string schema, Dictionary<string, HashSet<NameNumber>> nullables) => 
         schema.ProcessSchemaLines(
             (currentMessage, nn, line) =>
-                ShouldBeOptional(nullables, currentMessage, nn.Name, nn.Number) && !Regex.IsMatch(line, @"\boptional\b"),
+                ShouldBeOptional(nullables, currentMessage, nn.Name, nn.Number) && !IsOptionalRegex().IsMatch(line),
             line => Regex.Replace(line, @"^(\s*)", "$1optional "));
 
     private static string ProcessSchemaLines(
@@ -19,33 +19,93 @@ public static class StringExtensions
         Func<string, NameNumber, string, bool> predicate,
         Func<string, string> replaceFunc = null)
     {
-        string[] lines = schema.GetLines();
-
         var output = new List<string>();
+
+        WalkProtoSchema(
+            schema,
+            onLine: output.Add,
+            onMessageEnter: _ => { },
+            onMessageExit: () => { },
+            onField: (msg, field, line) =>
+            predicate(msg, field, line)
+                ? replaceFunc?.Invoke(line)
+                : line);
+
+        return string.Join("\n", output);
+    }
+
+    public static void GetOptionals(this string protoText, Dictionary<string, HashSet<NameNumber>> result) =>
+        protoText.ProcessSchemaLines(
+             (_, _, line) => IsOptionalRegex().IsMatch(line),
+             (msg, nameNum) =>
+             {
+                 if (!result.TryGetValue(msg, out var set))
+                 {
+                     set = [];
+                     result[msg] = set;
+                 }
+
+                 set.Add(nameNum);
+             });
+
+    private static void ProcessSchemaLines(
+        this string schema,
+        Func<string, NameNumber, string, bool> predicate,
+        Action<string, NameNumber> action = null)
+    {
+        WalkProtoSchema(
+            schema,
+            onLine: _ => { },
+            onMessageEnter: _ => { },
+            onMessageExit: () => { },
+            onField: (msg, field, line) =>
+            {
+                if (predicate(msg, field, line))
+                {
+                    action?.Invoke(msg, field);
+                }
+
+                return line;
+            });
+    }
+
+    private static void WalkProtoSchema(
+        string schema,
+        Action<string> onLine,
+        Action<string> onMessageEnter,
+        Action onMessageExit,
+        Func<string, NameNumber, string, string> onField)
+    {
+        var lines = schema.GetLines();
+
         string currentMessage = null;
         bool insideMessage = false;
 
         var messageRegex = new Regex(@"^\s*message\s+(\w+)");
-        var fieldRegex = new Regex(@"^\s*(?:optional\s+)?([\w\.]+)\s+(\w+)\s*=\s*(\d+)(.*)$");
+        var fieldRegex = new Regex(
+            @"^\s*(?:optional\s+)?([\w\.]+)\s+(\w+)\s*=\s*(\d+)(.*)$",
+            RegexOptions.Compiled);
 
-        foreach (string rawLine in lines)
+        foreach (var rawLine in lines)
         {
-            string line = rawLine;
+            var line = rawLine;
 
             var messageMatch = messageRegex.Match(line);
             if (messageMatch.Success)
             {
                 currentMessage = messageMatch.Groups[1].Value.WithPath(currentMessage);
                 insideMessage = true;
-                output.Add(line);
+                onMessageEnter?.Invoke(currentMessage);
+                onLine?.Invoke(line);
                 continue;
             }
 
-            if (insideMessage && line.Trim().StartsWith("}"))
+            if (insideMessage && line.TrimStart().StartsWith("}"))
             {
+                onMessageExit?.Invoke();
                 currentMessage = currentMessage.PopPath();
-                insideMessage = currentMessage is not null;
-                output.Add(line);
+                insideMessage = currentMessage != null;
+                onLine?.Invoke(line);
                 continue;
             }
 
@@ -54,20 +114,19 @@ public static class StringExtensions
                 var fieldMatch = fieldRegex.Match(line);
                 if (fieldMatch.Success)
                 {
-                    string fieldName = fieldMatch.Groups[2].Value; // eg "SampleId"
-                    int fieldNumber = int.Parse(fieldMatch.Groups[3].Value); // eg "1"
+                    var fieldName = fieldMatch.Groups[2].Value;
+                    var fieldNumber = int.Parse(fieldMatch.Groups[3].Value);
 
-                    if(predicate(currentMessage, new NameNumber(fieldName, fieldNumber), line))
-                    {
-                        line = replaceFunc?.Invoke(line) ?? line;
-                    }
+                    line = onField?.Invoke(
+                        currentMessage,
+                        new NameNumber(fieldName, fieldNumber),
+                        line
+                    ) ?? line;
                 }
             }
 
-            output.Add(line);
+            onLine?.Invoke(line);
         }
-
-        return string.Join("\n", output);
     }
 
     public static string WithPath(this string messageName, string path) => path is null ? messageName : $"{path}:{messageName}";
@@ -213,4 +272,7 @@ public static class StringExtensions
         public Dictionary<string, FieldInfo> Fields { get; } = [];
         public Dictionary<string, MessageNode> Nested { get; } = [];
     }
+
+    [GeneratedRegex(@"\boptional\b")]
+    private static partial Regex IsOptionalRegex();
 }

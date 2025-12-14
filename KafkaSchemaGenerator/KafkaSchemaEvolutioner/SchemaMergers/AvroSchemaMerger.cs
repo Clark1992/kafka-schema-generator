@@ -28,8 +28,8 @@ public class AvroSchemaMerger: ISchemaMerger
         // --- record ---
         if (IsRecord(oldSchema) && IsRecord(newSchema))
         {
-            var oldRec = oldSchema as JObject ?? throw new InvalidCastException("Expected JObject");
-            var newRec = newSchema as JObject ?? throw new InvalidCastException("Expected JObject");
+            var oldRec = oldSchema as JObject ?? throw new InvalidCastException("AVRO: Expected JObject");
+            var newRec = newSchema as JObject ?? throw new InvalidCastException("AVRO: Expected JObject");
 
             var oldFields = oldRec["fields"].Cast<JObject>()
                 .ToDictionary(f => f["name"]!.ToString());
@@ -41,6 +41,7 @@ public class AvroSchemaMerger: ISchemaMerger
                 if (oldFields.TryGetValue(name, out var of))
                 {
                     nf["type"] = MergeTypes(of["type"], nf["type"]);
+                    MergeNullablesIfNeeded(of, nf);
                 }
                 else
                 {
@@ -76,7 +77,7 @@ public class AvroSchemaMerger: ISchemaMerger
         }
 
         throw new InvalidOperationException(
-            $"Incompatible types: old={oldSchema} new={newSchema}");
+            $"AVRO: Incompatible types: old={oldSchema} new={newSchema}");
     }
 
     private static bool IsRecord(JToken t) =>
@@ -119,7 +120,8 @@ public class AvroSchemaMerger: ISchemaMerger
         {
             if (t.Type == JTokenType.String) return t.ToString();
             if (t.Type == JTokenType.Object) return t["type"]?.ToString() ?? "";
-            if (t.Type == JTokenType.Array) return string.Join("|", ((JArray)t).Select(Norm));
+            if (t.Type == JTokenType.Array) return string.Join("|", ((JArray)t)
+                .Where(i => i.ToString() is not "null").Select(Norm).OrderBy(i => i));
             return t.ToString();
         }
 
@@ -132,5 +134,28 @@ public class AvroSchemaMerger: ISchemaMerger
         if (o.Contains("null") && n.Contains("null")) return true;
 
         return false;
+    }
+
+    private static bool IsNullable(JToken field)
+    {
+        var t = field["type"];
+        if (t.Type == JTokenType.Array)
+            return ((JArray)t).Any(x => x.ToString() == "null");
+
+        return false;
+    }
+
+    private static void MergeNullablesIfNeeded(JToken oldField, JToken newField)
+    {
+        var oldNullable = IsNullable(oldField);
+        var newNullable = IsNullable(newField);
+
+        if (oldNullable == newNullable)
+            return;
+
+        if (oldNullable && !newNullable)
+        {
+            MakeNullable(newField as JObject);
+        }
     }
 }

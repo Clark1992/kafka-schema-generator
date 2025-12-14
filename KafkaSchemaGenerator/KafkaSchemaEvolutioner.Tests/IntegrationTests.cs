@@ -87,6 +87,42 @@ public class SchemaEvolutionerTests
         Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expected)));
     }
 
+    [Theory]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.json",
+        "expectedJSON_with_Nullable1-value.json")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.json",
+        "expectedJSON_with_Nullable2-value.json")]
+    public void GenerateJsonSchema_Nullable_ShouldGenerateEvolvedSchema(
+        string type,
+        string actualJsonFile,
+        string expectedJsonFile)
+    {
+        // Arrange
+        var format = "json";
+        var outputFolder = $"{format}_evolved_schema";
+
+        // Act
+        string pathToAssembly = Assembly.GetExecutingAssembly().Location;
+        var result = _sut.Execute(
+            pathToAssembly,
+            type,
+            format,
+            $"downloaded_{format}",
+            outputFolder,
+            null);
+
+        // Assert
+        Assert.True(result);
+        var expected = File.ReadAllText(expectedJsonFile);
+        var actual = File.ReadAllText($"{outputFolder}/{actualJsonFile}");
+        Assert.NotNull(actual);
+        Assert.True(JToken.DeepEquals(JObject.Parse(actual), JObject.Parse(expected)));
+    }
+
     [Theory(Skip = "Avromulti not supported currently")]
     [InlineData(
         "KafkaSchemaEvolutioner.Tests.ISampleEvent",
@@ -201,6 +237,49 @@ public class SchemaEvolutionerTests
 
     [Theory]
     [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.avsc",
+        "expectedAVRO_with_Nullable1-value.avsc")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.avsc",
+        "expectedAVRO_with_Nullable2-value.avsc")]
+    public void GenerateAvroSchema_Nullable_ShouldGenerateEvolvedSchema(
+        string type,
+        string actualAvroFile,
+        string expectedAvroFile)
+    {
+        // Arrange
+        var format = "avro";
+        var outputFolder = $"{format}_evolved_schema";
+
+        // Act
+        string pathToAssembly = Assembly.GetExecutingAssembly().Location;
+        var result = _sut.Execute(
+            pathToAssembly,
+            type,
+            format,
+            $"downloaded_{format}",
+            outputFolder,
+            null);
+
+        // Assert
+        Assert.True(result);
+
+        var expected = File.ReadAllText(expectedAvroFile);
+
+        var actual = File.ReadAllText($"{outputFolder}/{actualAvroFile}");
+
+        var actualJson = JObject.Parse(actual);
+
+        var expectedJson = JObject.Parse(expected);
+
+        Assert.NotNull(actual);
+        Assert.True(JToken.DeepEquals(actualJson, expectedJson));
+    }
+
+    [Theory]
+    [InlineData(
         "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent",
         null,
         "KafkaSchemaEvolutioner.Tests.Proto.SampleRebuiltEvent.proto",
@@ -239,6 +318,45 @@ public class SchemaEvolutionerTests
             $"downloaded_{format}",
             outputFolder,
             topic);
+
+        // Assert
+        Assert.True(result);
+
+        var expected = File.ReadAllText(expectedProtoFile);
+
+        var actual = File.ReadAllText($"{outputFolder}/{actualProtoFile}");
+
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
+    }
+
+    [Theory]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.proto",
+        "expectedPROTO_with_Nullable1-value.proto")]
+    [InlineData(
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2",
+        "KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.proto",
+        "expectedPROTO_with_Nullable2-value.proto")]
+    public void GenerateProtoSchema_Nullable_ShouldGenerateEvolvedSchema(
+        string type,
+        string actualProtoFile,
+        string expectedProtoFile)
+    {
+        // Arrange
+        var format = "proto";
+        var outputFolder = $"{format}_evolved_schema";
+
+        // Act
+        string pathToAssembly = Assembly.GetExecutingAssembly().Location;
+        var result = _sut.Execute(
+            pathToAssembly,
+            type,
+            format,
+            $"downloaded_{format}",
+            outputFolder,
+            null);
 
         // Assert
         Assert.True(result);

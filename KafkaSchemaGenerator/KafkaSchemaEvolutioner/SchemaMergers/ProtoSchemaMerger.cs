@@ -3,6 +3,7 @@
 using KafkaSchemaGenerator;
 using KafkaSchemaGenerator.Common.Utils;
 using Microsoft.Extensions.Logging;
+using System;
 using ProtobufNet = ProtobufNetReflection::Google.Protobuf.Reflection;
 
 namespace KafkaSchemaEvolutioner.SchemaMergers;
@@ -18,6 +19,7 @@ public class ProtoSchemaMerger(ILogger<ProtoSchemaMerger> logger) : ISchemaMerge
 
         var newFields = new Dictionary<string, HashSet<NameNumber>>();
         var removedFields = new Dictionary<string, HashSet<NameNumber>>();
+        var oldOptionalFields = new Dictionary<string, HashSet<NameNumber>>();
 
         foreach (var oldMsg in oldFile.MessageTypes)
         {
@@ -31,7 +33,12 @@ public class ProtoSchemaMerger(ILogger<ProtoSchemaMerger> logger) : ISchemaMerge
             DetectNewAndRemovedFields(oldMsg, newMsg, newFields, removedFields);
         }
 
-        newProtoText = newProtoText.AddOptionals(newFields).ReInsertDeleted(oldProtoText);
+        oldProtoText.GetOptionals(oldOptionalFields);
+
+        newProtoText = newProtoText
+            .AddOptionals(newFields)
+            .AddOptionals(oldOptionalFields)
+            .ReInsertDeleted(oldProtoText);
 
         return newProtoText;
     }

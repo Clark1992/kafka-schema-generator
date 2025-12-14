@@ -26,15 +26,18 @@
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "Description": {
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "Address": {
+          "default": null,
           "oneOf": [
             {
               "type": "null"
@@ -104,7 +107,8 @@
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "$type": {
           "type": "string",
@@ -137,7 +141,8 @@
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "$type": {
           "type": "string",
@@ -167,6 +172,7 @@
           "default": null
         },
         "NewAddress": {
+          "default": null,
           "oneOf": [
             {
               "type": "null"
@@ -204,6 +210,7 @@
           "default": null
         },
         "AddedAttachment": {
+          "default": null,
           "oneOf": [
             {
               "type": "null"
@@ -211,8 +218,7 @@
             {
               "$ref": "#/definitions/SampleAttachment"
             }
-          ],
-          "default": null
+          ]
         },
         "$type": {
           "type": "string",
@@ -303,13 +309,15 @@
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "NewUrl": {
           "type": [
             "null",
             "string"
-          ]
+          ],
+          "default": null
         },
         "$type": {
           "type": "string",

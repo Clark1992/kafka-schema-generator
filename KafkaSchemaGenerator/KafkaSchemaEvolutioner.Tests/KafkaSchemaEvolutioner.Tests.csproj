@@ -26,6 +26,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.avsc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.avsc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.Avro.SampleRebuiltEvent.avsc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -86,6 +92,18 @@
       <None Update="downloaded_avro\KafkaSchemaEvolutioner.Tests.SampleNameChangedEvent.avsc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="downloaded_json\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="downloaded_proto\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable2.proto">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="downloaded_proto\KafkaSchemaEvolutioner.Tests.Nullable.SampleNullable1.proto">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="downloaded_proto\KafkaSchemaEvolutioner.Tests.Proto.SampleEventKey.proto">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -113,6 +131,12 @@
       <None Update="expectedAVRO-key.avsc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="expectedAVRO_with_Nullable2-value.avsc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="expectedAVRO_with_Nullable1-value.avsc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="expectedAVRO-value.avsc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -122,10 +146,22 @@
       <None Update="expectedJSON-key.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="expectedJSON_with_Nullable2-value.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="expectedJSON_with_Nullable1-value.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="expectedJSON-value.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="expectedPROTO-key.proto">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="expectedPROTO_with_Nullable2-value.proto">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="expectedPROTO_with_Nullable1-value.proto">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="expectedPROTO-value.proto">
