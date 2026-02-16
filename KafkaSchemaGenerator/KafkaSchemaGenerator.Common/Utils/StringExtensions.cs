@@ -145,7 +145,7 @@ public static partial class StringExtensions
     public static string ReInsertDeleted(this string newSchema, string oldSchema)
     {
         // 1. Extract header
-        var headerMatch = Regex.Match(newSchema, @"^([\s\S]*?)(?=^message\s)", RegexOptions.Multiline);
+        var headerMatch = Regex.Match(newSchema, @"^([\s\S]*?)(?=^(?:message|enum)\s)", RegexOptions.Multiline);
         string header = headerMatch.Success ? headerMatch.Groups[1].Value.TrimEnd() + "\n\n" : "";
 
         // 2. Parse schemas
@@ -159,40 +159,13 @@ public static partial class StringExtensions
         var result = new StringBuilder();
         result.Append(header);
 
-        foreach (var msg in newTree.Nested.Values)
+        foreach (var node in newTree.Nested.Values)
         {
-            result.AppendLine($"message {msg.Name} {{");
-            result.Append(BuildSchema(msg, 1));
-            result.AppendLine("}");
+            node.AppendSchema(result, 0);
             result.AppendLine();
         }
 
         return result.ToString().TrimEnd();
-    }
-
-    static string BuildSchema(MessageNode node, int indent = 0)
-    {
-        var sb = new StringBuilder();
-        string pad = new string(' ', indent * 4);
-
-        foreach (var nested in node.Nested.Values)
-        {
-            sb.AppendLine($"{pad}message {nested.Name} {{");
-            sb.Append(BuildSchema(nested, indent + 1));
-            sb.AppendLine($"{pad}}}");
-            sb.AppendLine();
-        }
-
-        foreach (var field in node.Fields.Values.OrderBy(f => f.Number))
-        {
-            string prefix = field.Optional ? "optional " :
-                            field.Repeated ? "repeated " :
-                            field.Required ? "required " : "";
-            string suffix = field.IsFromPrevSchema ? " [deprecated = true]" : "";
-            sb.AppendLine($"{pad}{prefix}{field.Type} {field.Name} = {field.Number}{suffix};");
-        }
-
-        return sb.ToString();
     }
 
     static void MergeMessages(MessageNode oldMsg, MessageNode newMsg)
@@ -209,11 +182,15 @@ public static partial class StringExtensions
         {
             if (!newMsg.Nested.TryGetValue(nestedName, out var newNested))
             {
-                newMsg.Nested[nestedName] = oldNested;
+                if (oldNested is EnumNode)
+                {
+                    newMsg.Nested[nestedName] = oldNested;
+                }
             }
             else
-            {
-                MergeMessages(oldNested, newNested);
+            {   
+                if (oldNested is MessageNode on && newNested is MessageNode nn)
+                    MergeMessages(on, nn);
             }
         }
     }
@@ -221,9 +198,9 @@ public static partial class StringExtensions
     static MessageNode ParseMessage(string schema, bool isPrevSchema)
     {
         var root = new MessageNode { Name = "root" };
-        var stack = new Stack<MessageNode>();
+        var stack = new Stack<INode>();
         stack.Push(root);
-        var enumDepth = 0;
+        var currentBlock = CurrentBlock.None;
 
         var lines = schema.GetLines()
             .Select(l => l.Trim())
@@ -231,33 +208,50 @@ public static partial class StringExtensions
             .ToArray();
 
         var msgRegex = new Regex(@"^message\s+(\w+)\s*\{", RegexOptions.Compiled);
-        var fieldRegex = new Regex(@"^(optional|required|repeated)?\s*([\.\w]+)\s+(\w+)\s*=\s*(\d+);", RegexOptions.Compiled);
+        var enumRegex = new Regex(@"^enum\s+(\w+)\s*\{", RegexOptions.Compiled);
+        var fieldRegex = new Regex(@"^(optional|required|repeated)?\s*([\.\w]+)\s+(\w+)\s*=\s*(\d+)(?:\s*\[[^\]]*\])?\s*;.*$", RegexOptions.Compiled);
+
 
         foreach (var line in lines)
         {
+            currentBlock = stack.Peek() switch
+            {
+                MessageNode m and not null when m != root => CurrentBlock.Message,
+                EnumNode _ => CurrentBlock.Enum,
+                _ => CurrentBlock.None
+            };
+
             if (msgRegex.IsMatch(line))
             {
                 var msgName = msgRegex.Match(line).Groups[1].Value;
                 var newNode = new MessageNode { Name = msgName };
-                stack.Peek().Nested[msgName] = newNode;
+                (stack.Peek() as MessageNode)?.Nested.Add(msgName, newNode);
                 stack.Push(newNode);
                 continue;
             }
 
-            if (line.StartsWith("enum ", StringComparison.Ordinal))
+            if (enumRegex.IsMatch(line))
             {
-                enumDepth += line.Count(static c => c == '{');
+                var enumName = enumRegex.Match(line).Groups[1].Value;
+                var newNode = new EnumNode { Name = enumName };
+                (stack.Peek() as MessageNode)?.Nested.Add(enumName, newNode);
+                stack.Push(newNode);
+                continue;
             }
 
             if (line == "}")
             {
-                if (enumDepth > 0)
+                if (stack.Count > 1)
                 {
-                    enumDepth--;
-                    continue;
+                    stack.Pop();
                 }
 
-                stack.Pop();
+                continue;
+            }
+
+            if (currentBlock is CurrentBlock.Enum)
+            {
+                (stack.Peek() as EnumNode)?.Lines.Add(line);
                 continue;
             }
 
@@ -273,7 +267,7 @@ public static partial class StringExtensions
                 bool repeated = modifier == "repeated";
                 bool required = modifier == "required";
 
-                stack.Peek().Fields[name] = new FieldInfo(type, name, number, optional, repeated, required, isPrevSchema);
+                (stack.Peek() as MessageNode)?.Fields.Add(name, new FieldInfo(type, name, number, optional, repeated, required, isPrevSchema));
             }
         }
 
@@ -282,11 +276,71 @@ public static partial class StringExtensions
 
     record FieldInfo(string Type, string Name, int Number, bool Optional, bool Repeated, bool Required, bool IsFromPrevSchema);
 
-    class MessageNode
+    enum CurrentBlock
+    {
+        None,
+        Message,
+        Enum
+    }
+
+    class MessageNode : INode
     {
         public string Name { get; set; } = "";
         public Dictionary<string, FieldInfo> Fields { get; } = [];
-        public Dictionary<string, MessageNode> Nested { get; } = [];
+        public Dictionary<string, INode> Nested { get; } = [];
+
+        public StringBuilder AppendSchema(StringBuilder sb, int indent)
+        {
+            string pad = new string(' ', indent * 4);
+
+            sb.AppendLine($"{pad}message {Name} {{");
+
+            foreach (var nested in Nested.Values)
+            {
+                nested.AppendSchema(sb, indent + 1);
+                sb.AppendLine();
+            }
+
+            foreach (var field in Fields.Values.OrderBy(f => f.Number))
+            {
+                string prefix = field.Optional ? "optional " :
+                                field.Repeated ? "repeated " :
+                                field.Required ? "required " : "";
+                string suffix = field.IsFromPrevSchema ? " [deprecated = true]" : "";
+
+                sb.AppendLine($"{pad}    {prefix}{field.Type} {field.Name} = {field.Number}{suffix};");
+            }
+
+            sb.AppendLine($"{pad}}}");
+            return sb;
+        }
+    }
+
+    class EnumNode : INode
+    {
+        public string Name { get; set; } = "";
+        public List<string> Lines { get; } = [];
+
+        public StringBuilder AppendSchema(StringBuilder sb, int indent)
+        {
+            string pad = new string(' ', indent * 4);
+
+            sb.AppendLine($"{pad}enum {Name} {{");
+            foreach (var line in Lines)
+            {
+                sb.AppendLine($"{pad}    {line}");
+            }
+
+            sb.AppendLine($"{pad}}}");
+            return sb;
+        }
+    }
+
+    interface INode
+    {
+        string Name { get; }
+
+        StringBuilder AppendSchema(StringBuilder sb, int indent);
     }
 
     [GeneratedRegex(@"\boptional\b")]

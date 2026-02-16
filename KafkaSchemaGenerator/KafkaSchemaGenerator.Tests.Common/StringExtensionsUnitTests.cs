@@ -20,7 +20,7 @@ public class StringExtensionsUnitTests
     }
 
         [Fact]
-        public void ReInsertDeleted_ShouldHandleEnumBlocksWithoutStackUnderflow()
+        public void ReInsertDeleted_NameRemoved_ShouldKeepEnumBlocks()
         {
                 const string oldSchema = """
                         syntax = "proto3";
@@ -28,6 +28,10 @@ public class StringExtensionsUnitTests
                         message Sample {
                             string Name = 1;
                             SampleStatus Status = 2;
+                        }
+
+                        message Sample2 {
+                            string Name2 = 1;
                         }
 
                         enum SampleStatus {
@@ -51,8 +55,66 @@ public class StringExtensionsUnitTests
 
                 var actual = newSchema.ReInsertDeleted(oldSchema);
 
-                Assert.Contains("string Name = 1 [deprecated = true];", actual);
-        }
+                Assert.Equal("""
+                        syntax = "proto3";
+
+                        message Sample {
+                            string Name = 1 [deprecated = true];
+                            SampleStatus Status = 2;
+                        }
+
+                        enum SampleStatus {
+                            Unknown = 0;
+                            Active = 1;
+                        }
+                        """, actual, ignoreLineEndingDifferences: true);
+    }
+
+    [Fact]
+    public void ReInsertDeleted_EnumRemoved_ShouldKeepEnumBlocks()
+    {
+        const string oldSchema = """
+                        syntax = "proto3";
+
+                        message Sample {
+                            string Name = 1;
+                            SampleStatus Status = 2;
+                        }
+
+                        message Sample2 {
+                            string Name2 = 1;
+                        }
+
+                        enum SampleStatus {
+                            Unknown = 0;
+                            Active = 1;
+                        }
+                        """;
+
+        const string newSchema = """
+                        syntax = "proto3";
+
+                        message Sample {
+                            string Name = 1;
+                        }
+                        """;
+
+        var actual = newSchema.ReInsertDeleted(oldSchema);
+
+        Assert.Equal("""
+                        syntax = "proto3";
+
+                        message Sample {
+                            string Name = 1;
+                            SampleStatus Status = 2 [deprecated = true];
+                        }
+
+                        enum SampleStatus {
+                            Unknown = 0;
+                            Active = 1;
+                        }
+                        """, actual, ignoreLineEndingDifferences: true);
+    }
 
     [Fact]
     public void AddOptionals_ShouldReInsertRemovedAsDeprecated()
