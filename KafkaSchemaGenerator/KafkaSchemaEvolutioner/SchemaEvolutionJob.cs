@@ -35,6 +35,9 @@ public class SchemaEvolutionJob(SchemaGeneratorJob generatorJob, ISchemaMergerFa
         foreach (var newSchemaPath in newSchemaFiles)
         {
             var fileName = Path.GetFileName(newSchemaPath);
+
+            logger.LogInformation("Processing {fileName}...", fileName);
+
             var newSchemaText = File.ReadAllText(newSchemaPath, Encoding.UTF8);
 
             var oldSchemaPath = Path.Combine(currentLatestSchemaPath, fileName);

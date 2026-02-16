@@ -3,7 +3,6 @@
 using KafkaSchemaGenerator;
 using KafkaSchemaGenerator.Common.Utils;
 using Microsoft.Extensions.Logging;
-using System;
 using ProtobufNet = ProtobufNetReflection::Google.Protobuf.Reflection;
 
 namespace KafkaSchemaEvolutioner.SchemaMergers;

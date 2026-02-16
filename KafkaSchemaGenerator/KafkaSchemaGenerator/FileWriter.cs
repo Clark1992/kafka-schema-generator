@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace KafkaSchemaGenerator;
+﻿namespace KafkaSchemaGenerator;
 
 using System.IO;
 
