@@ -223,6 +223,7 @@ public static partial class StringExtensions
         var root = new MessageNode { Name = "root" };
         var stack = new Stack<MessageNode>();
         stack.Push(root);
+        var enumDepth = 0;
 
         var lines = schema.GetLines()
             .Select(l => l.Trim())
@@ -240,12 +241,27 @@ public static partial class StringExtensions
                 var newNode = new MessageNode { Name = msgName };
                 stack.Peek().Nested[msgName] = newNode;
                 stack.Push(newNode);
+                continue;
             }
-            else if (line == "}")
+
+            if (line.StartsWith("enum ", StringComparison.Ordinal))
             {
-                stack.Pop();
+                enumDepth += line.Count(static c => c == '{');
             }
-            else if (fieldRegex.IsMatch(line))
+
+            if (line == "}")
+            {
+                if (enumDepth > 0)
+                {
+                    enumDepth--;
+                    continue;
+                }
+
+                stack.Pop();
+                continue;
+            }
+
+            if (fieldRegex.IsMatch(line))
             {
                 var m = fieldRegex.Match(line);
                 string modifier = m.Groups[1].Value;

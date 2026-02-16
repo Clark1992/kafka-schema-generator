@@ -19,6 +19,41 @@ public class StringExtensionsUnitTests
         Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
     }
 
+        [Fact]
+        public void ReInsertDeleted_ShouldHandleEnumBlocksWithoutStackUnderflow()
+        {
+                const string oldSchema = """
+                        syntax = "proto3";
+
+                        message Sample {
+                            string Name = 1;
+                            SampleStatus Status = 2;
+                        }
+
+                        enum SampleStatus {
+                            Unknown = 0;
+                            Active = 1;
+                        }
+                        """;
+
+                const string newSchema = """
+                        syntax = "proto3";
+
+                        message Sample {
+                            SampleStatus Status = 2;
+                        }
+
+                        enum SampleStatus {
+                            Unknown = 0;
+                            Active = 1;
+                        }
+                        """;
+
+                var actual = newSchema.ReInsertDeleted(oldSchema);
+
+                Assert.Contains("string Name = 1 [deprecated = true];", actual);
+        }
+
     [Fact]
     public void AddOptionals_ShouldReInsertRemovedAsDeprecated()
     {
