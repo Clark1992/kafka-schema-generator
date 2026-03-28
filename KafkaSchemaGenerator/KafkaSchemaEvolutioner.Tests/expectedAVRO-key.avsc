@@ -1,18 +1,7 @@
-﻿{
-  "namespace": "KafkaSchemaEvolutioner.Tests.Avro",
-  "name": "SampleEventKey",
+{
+  "name": "KafkaSchemaEvolutioner.Tests.Avro.SampleEventKey",
   "type": "record",
   "fields": [
-    {
-      "name": "NewSampleId",
-      "type": [
-        "null",
-        {
-          "type": "string",
-          "logicalType": "uuid"
-        }
-      ],
-      "default": null
-    }
+    {"name": "NewSampleId", "type": ["null", {"type": "string", "logicalType": "uuid"}], "default": null}
   ]
 }

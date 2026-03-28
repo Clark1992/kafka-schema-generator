@@ -7,13 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Chr.Avro" Version="10.12.0" />
+        <PackageReference Include="Chr.Avro.Json" Version="10.12.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
         <PackageReference Include="NJsonSchema" Version="11.5.0" />
         <PackageReference Include="NJsonSchema.NewtonsoftJson" Version="11.5.0" />
-        <PackageReference Include="AvroSchemaGenerator" Version="2.10.0" />
         <PackageReference Include="protobuf-net" Version="3.2.56" />
     </ItemGroup>
 

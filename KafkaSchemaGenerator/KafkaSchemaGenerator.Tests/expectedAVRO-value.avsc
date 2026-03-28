@@ -1,30 +1,21 @@
 ﻿{
-  "namespace": "KafkaSchemaGenerator.Tests.Avro",
-  "name": "SampleRebuiltEvent",
+  "name": "KafkaSchemaGenerator.Tests.Avro.SampleRebuiltEvent",
   "type": "record",
   "fields": [
     {
-      "name": "SampleId",
-      "type": {
-        "type": "string",
-        "logicalType": "uuid"
-      }
-    },
-    {
-      "name": "Name",
-      "type": "string"
-    },
-    {
-      "name": "Description",
-      "type": "string"
-    },
-    {
       "name": "Address",
       "type": {
-        "namespace": "KafkaSchemaGenerator.Tests.Avro",
-        "name": "SampleAddress",
+        "name": "KafkaSchemaGenerator.Tests.Avro.SampleAddress",
         "type": "record",
         "fields": [
+          {
+            "name": "City",
+            "type": "string"
+          },
+          {
+            "name": "Country",
+            "type": "string"
+          },
           {
             "name": "Id",
             "type": {
@@ -35,14 +26,6 @@
           {
             "name": "Street",
             "type": "string"
-          },
-          {
-            "name": "City",
-            "type": "string"
-          },
-          {
-            "name": "Country",
-            "type": "string"
           }
         ]
       }
@@ -52,20 +35,19 @@
       "type": {
         "type": "array",
         "items": {
-          "namespace": "KafkaSchemaGenerator.Tests.Avro",
-          "name": "SampleAttachment",
+          "name": "KafkaSchemaGenerator.Tests.Avro.SampleAttachment",
           "type": "record",
           "fields": [
+            {
+              "name": "FileName",
+              "type": "string"
+            },
             {
               "name": "Id",
               "type": {
                 "type": "string",
                 "logicalType": "uuid"
               }
-            },
-            {
-              "name": "FileName",
-              "type": "string"
             },
             {
               "name": "Url",
@@ -76,10 +58,32 @@
       }
     },
     {
+      "name": "Description",
+      "type": "string"
+    },
+    {
+      "name": "Name",
+      "type": "string"
+    },
+    {
       "name": "OccurredAt",
       "type": {
         "type": "long",
         "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "SampleId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "Tags",
+      "type": {
+        "type": "array",
+        "items": "string"
       }
     }
   ]

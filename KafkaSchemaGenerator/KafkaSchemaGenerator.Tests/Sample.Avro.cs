@@ -22,6 +22,8 @@ public class SampleRebuiltEvent
     public List<SampleAttachment> Attachments { get; set; }
     [Required]
     public DateTime OccurredAt { get; set; }
+    [Required]
+    public string[] Tags { get; set; }
 }
 
 public class SampleAddress

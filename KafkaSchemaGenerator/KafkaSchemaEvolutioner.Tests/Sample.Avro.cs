@@ -23,6 +23,8 @@ public class SampleRebuiltEvent
 
     [Required]
     public DateTime NewOccurredAt { get; set; }
+    [Required]
+    public string[] Tags { get; set; }
 }
 
 public class SampleAddress

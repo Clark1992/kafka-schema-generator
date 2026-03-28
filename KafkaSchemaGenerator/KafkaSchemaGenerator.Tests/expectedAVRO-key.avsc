@@ -1,6 +1,5 @@
 ﻿{
-  "namespace": "KafkaSchemaGenerator.Tests.Avro",
-  "name": "SampleEventKey",
+  "name": "KafkaSchemaGenerator.Tests.Avro.SampleEventKey",
   "type": "record",
   "fields": [
     {
